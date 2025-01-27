@@ -3,6 +3,65 @@
 {% block title %}Главная страница{% endblock %}
 
 {% block content %}
-<h1>Добро пожаловать на сайт!</h1>
-<p>Это основная страница вашего проекта.</p>
+<div class="row">
+    <!-- Боковая навигация -->
+    <aside class="col-md-3">
+        <h5>Темы</h5>
+        <ul class="list-group">
+            <li class="list-group-item dropdown">
+                <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Игры</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Экшен</a></li>
+                    <li><a class="dropdown-item" href="#">РПГ</a></li>
+                    <li><a class="dropdown-item" href="#">Шутеры</a></li>
+                </ul>
+            </li>
+            <li class="list-group-item dropdown">
+                <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Фильмы</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Драмы</a></li>
+                    <li><a class="dropdown-item" href="#">Боевики</a></li>
+                    <li><a class="dropdown-item" href="#">Комедии</a></li>
+                </ul>
+            </li>
+            <li class="list-group-item dropdown">
+                <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Сериалы</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Фантастика</a></li>
+                    <li><a class="dropdown-item" href="#">Детективы</a></li>
+                    <li><a class="dropdown-item" href="#">Мелодрамы</a></li>
+                </ul>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Основной контент -->
+    <section class="col-md-9">
+        <h1 class="mb-4">Последние статьи</h1>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Заголовок статьи 1</h5>
+                <p class="card-text">Краткое описание первой статьи. Здесь будет текст, привлекающий внимание читателей и призывающий прочитать полную версию.</p>
+                <a href="#" class="btn btn-primary">Читать далее</a>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Заголовок статьи 2</h5>
+                <p class="card-text">Краткое описание второй статьи. Здесь также содержится информация о статье, которая будет интересна читателям.</p>
+                <a href="#" class="btn btn-primary">Читать далее</a>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Заголовок статьи 3</h5>
+                <p class="card-text">Краткое описание третьей статьи. Этот текст может быть заменён на содержимое любой другой статьи.</p>
+                <a href="#" class="btn btn-primary">Читать далее</a>
+            </div>
+        </div>
+    </section>
+</div>
 {% endblock %}
