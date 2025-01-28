@@ -1,16 +1,42 @@
-from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 
+from MainApp.models import Post
+from app_user.models import CustomUserCreationForm
+
 
 def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+    if request.method == "POST":
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Аккаунт {username} успешно создан!')
-            return redirect('login')
+            return redirect('login')  # Перенаправление после успешной регистрации
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
+
+
+def profile(request, pk):  # Используем pk вместо user_id
+    user = get_object_or_404(User, id=pk)
+    posts = Post.objects.filter(author=user).order_by('-created_date')
+    context = {
+        'title': f'Профиль пользователя {user.username}',
+        'user': user,
+        'posts': posts,
+    }
+    return render(request, 'accounts/profile.html', context)
+
+
+def bookmarks(request):
+    return render(request, 'accounts/bookmarks.html', {'title': 'Закладки'})
+
+
+def donations(request):
+    return render(request, 'accounts/donations.html', {'title': 'Донаты'})
+
+
+def settings(request):
+    return render(request, 'accounts/settings.html', {'title': 'Настройки'})

@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-{% block title %}Главная страница{% endblock %}
-
 {% block content %}
 <div class="row">
     <!-- Боковая навигация -->
@@ -39,29 +37,26 @@
     <section class="col-md-9">
         <h1 class="mb-4">Последние статьи</h1>
 
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Заголовок статьи 1</h5>
-                <p class="card-text">Краткое описание первой статьи. Здесь будет текст, привлекающий внимание читателей и призывающий прочитать полную версию.</p>
-                <a href="#" class="btn btn-primary">Читать далее</a>
-            </div>
-        </div>
-
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Заголовок статьи 2</h5>
-                <p class="card-text">Краткое описание второй статьи. Здесь также содержится информация о статье, которая будет интересна читателям.</p>
-                <a href="#" class="btn btn-primary">Читать далее</a>
-            </div>
-        </div>
-
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Заголовок статьи 3</h5>
-                <p class="card-text">Краткое описание третьей статьи. Этот текст может быть заменён на содержимое любой другой статьи.</p>
-                <a href="#" class="btn btn-primary">Читать далее</a>
-            </div>
-        </div>
+        {% if posts %}
+            {% for post in posts %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title|default:"Без заголовка" }}</h5>
+                        <!-- Добавьте эту строку для отображения даты публикации -->
+                        <p class="card-text text-muted">
+                            Опубликовано: {{ post.published_date|date:"d.m.Y H:i" }}
+                        </p>
+                        <p class="card-text">{{ post.content|truncatechars:200 }}</p>
+                        {% if post.image %}
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3" style="max-width: 300px;">
+                        {% endif %}
+                        <p><a href="{% url 'post_detail' post.pk %}" class="btn btn-primary">Читать далее</a></p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Пока нет статей.</p>
+        {% endif %}
     </section>
 </div>
 {% endblock %}

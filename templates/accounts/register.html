@@ -1,16 +1,118 @@
 {% extends 'base.html' %}
+{% load form_tags %}
 
 {% block title %}Регистрация{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <h2>Регистрация</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
-        </form>
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="mb-4 text-center">Регистрация</h2>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Общие ошибки формы (например, капча) -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Поле "Имя пользователя" -->
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Имя пользователя</label>
+                        {{ form.username|add_class:"form-control" }}
+                        <small class="form-text text-muted">
+                            - Логин должен быть уникальным.<br>
+                            - Допустимы буквы, цифры и символы @/./+/-/_.<br>
+                            - Максимум 150 символов.
+                        </small>
+                        {% if form.username.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.username.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Поле "Email" -->
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Email</label>
+                        {{ form.email|add_class:"form-control" }}
+                        <small class="form-text text-muted">
+                            - Введите корректный email.<br>
+                            - Например: example@example.com.
+                        </small>
+                        {% if form.email.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.email.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Поле "Пароль" -->
+                    <div class="mb-3">
+                        <label for="id_password1" class="form-label">Пароль</label>
+                        {{ form.password1|add_class:"form-control" }}
+                        <small class="form-text text-muted">
+                            - Пароль должен содержать не менее 8 символов.<br>
+                            - Пароль не должен быть слишком простым.<br>
+                            - Пароль не должен состоять только из цифр.
+                        </small>
+                        {% if form.password1.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.password1.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Поле "Повторите пароль" -->
+                    <div class="mb-3">
+                        <label for="id_password2" class="form-label">Повторите пароль</label>
+                        {{ form.password2|add_class:"form-control" }}
+                        <small class="form-text text-muted">
+                            - Введите пароль еще раз для подтверждения.
+                        </small>
+                        {% if form.password2.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.password2.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Поле "Капча" -->
+                    <div class="mb-3">
+                        {{ form.captcha|add_class:"form-control" }}
+                        <small class="form-text text-muted">
+                            - Введите символы с изображения.
+                        </small>
+                        {% if form.captcha.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.captcha.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Кнопка отправки формы -->
+                    <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
+                </form>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войдите</a></p>
+        </div>
     </div>
 </div>
 {% endblock %}
