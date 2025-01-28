@@ -40,3 +40,12 @@ def donations(request):
 
 def settings(request):
     return render(request, 'accounts/settings.html', {'title': 'Настройки'})
+
+
+def user_profile(request, username):
+    user = get_object_or_404(User, username=username)
+    posts = Post.objects.filter(author=user).order_by('-published_date')  # Получаем посты пользователя
+    return render(request, 'accounts/user_profile.html', {
+        'user': user,
+        'posts': posts,  # Передаем посты в контекст
+    })

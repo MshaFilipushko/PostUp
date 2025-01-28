@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Профиль пользователя: {{ user.username }}</h1>
+
+    <!-- Секция с постами пользователя -->
+    <h2 class="mt-4">Статьи пользователя</h2>
+    {% if posts %}
+        {% for post in posts %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title|default:"Без заголовка" }}</h5>
+                    <p class="card-text text-muted">
+                        Опубликовано: {{ post.published_date|date:"d.m.Y H:i" }}
+                    </p>
+                    <p class="card-text">{{ post.content|truncatechars:200 }}</p>
+                    {% if post.image %}
+                        <div class="text-center">
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3" style="max-width: 100%;">
+                        </div>
+                    {% endif %}
+                    <p><a href="{% url 'post_detail' post.pk %}" class="btn btn-primary">Читать далее</a></p>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>У пользователя пока нет статей.</p>
+    {% endif %}
+</div>
+{% endblock %}
