@@ -43,9 +43,9 @@ def settings(request):
 
 
 def user_profile(request, username):
-    user = get_object_or_404(User, username=username)
-    posts = Post.objects.filter(author=user).order_by('-published_date')  # Получаем посты пользователя
+    profile_user = get_object_or_404(User, username=username)
+    posts = Post.objects.filter(author=profile_user).order_by('-published_date')
     return render(request, 'accounts/user_profile.html', {
-        'user': user,
-        'posts': posts,  # Передаем посты в контекст
+        'profile_user': profile_user,
+        'posts': posts,
     })
