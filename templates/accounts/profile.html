@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center">{{ title }}</h1>
+    <p class="text-center">Это страница профиля пользователя {{ user.username }}.</p>
+
+    <div class="mt-5">
+        <h2>Мои статьи</h2>
+        {% if posts %}
+            <div class="list-group">
+                {% for post in posts %}
+                    <a href="{% url 'post_detail' pk=post.pk %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ post.title|default:"Без заголовка" }}</h5>
+                            <small>{{ post.created_date|date:"d.m.Y H:i" }}</small>
+                        </div>
+                        <p class="mb-1">{{ post.content|truncatechars:100 }}</p>
+                        {% if post.image %}
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mt-2" style="max-width: 200px;">
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>У вас пока нет статей.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
