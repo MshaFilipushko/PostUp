@@ -19,12 +19,12 @@ def register(request):
     return render(request, 'accounts/register.html', {'form': form})
 
 
-def profile(request, pk):  # Используем pk вместо user_id
-    user = get_object_or_404(User, id=pk)
-    posts = Post.objects.filter(author=user).order_by('published_date')  # Исправлено здесь
+def profile(request, pk):
+    profile_user = get_object_or_404(User, id=pk)
+    posts = Post.objects.filter(author=profile_user).order_by('published_date')
     context = {
-        'title': f'Профиль пользователя {user.username}',
-        'user': user,
+        'title': f'Профиль пользователя {profile_user.username}',
+        'profile_user': profile_user,
         'posts': posts,
     }
     return render(request, 'accounts/profile.html', context)
