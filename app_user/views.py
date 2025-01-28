@@ -21,7 +21,7 @@ def register(request):
 
 def profile(request, pk):  # Используем pk вместо user_id
     user = get_object_or_404(User, id=pk)
-    posts = Post.objects.filter(author=user).order_by('-created_date')
+    posts = Post.objects.filter(author=user).order_by('published_date')  # Исправлено здесь
     context = {
         'title': f'Профиль пользователя {user.username}',
         'user': user,

@@ -13,7 +13,7 @@
                     <a href="{% url 'post_detail' pk=post.pk %}" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">{{ post.title|default:"Без заголовка" }}</h5>
-                            <small>{{ post.created_date|date:"d.m.Y H:i" }}</small>
+                            <small>{{ post.published_date |date:"d.m.Y H:i" }}</small>
                         </div>
                         <p class="mb-1">{{ post.content|truncatechars:100 }}</p>
                         {% if post.image %}
