@@ -3,12 +3,87 @@
 {% block title %}Создать пост{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Создать пост</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" name="publish" class="btn btn-primary">Опубликовать</button>
-    </form>
+<div class="row">
+    <div class="col-md-8 mx-auto">  <!-- Центрируем форму и ограничиваем ширину -->
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title mb-4">Создать пост</h1>
+
+                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Поле заголовка -->
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">Заголовок</label>
+                        {{ form.title }}
+                        <div class="invalid-feedback">
+                            Пожалуйста, введите заголовок.
+                        </div>
+                    </div>
+
+                    <!-- Поле контента -->
+                    <div class="mb-3">
+                        <label for="{{ form.content.id_for_label }}" class="form-label">Содержание</label>
+                        {{ form.content }}
+                        <div class="invalid-feedback">
+                            Пожалуйста, напишите содержание поста.
+                        </div>
+                    </div>
+
+                    <!-- Поле изображения -->
+                    <div class="mb-4">
+                        <label for="{{ form.image.id_for_label }}" class="form-label">Изображение (необязательно)</label>
+                        {{ form.image }}
+                        <div class="form-text">
+                            Поддерживаемые форматы: JPG, PNG, GIF. Максимальный размер: 5MB.
+                        </div>
+                    </div>
+
+                    <!-- Кнопки управления -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'index' %}" class="btn btn-outline-secondary">Отмена</a>
+                        <button type="submit" name="publish" class="btn btn-primary">Опубликовать</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Подключение стилей для формы -->
+<style>
+    .form-control {
+        margin-bottom: 1rem;
+    }
+    textarea.form-control {
+        min-height: 200px;
+        resize: vertical;
+    }
+    .card {
+        margin-top: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+</style>
+
+<!-- Валидация формы -->
+<script>
+    (function () {
+        'use strict'
+
+        var forms = document.querySelectorAll('.needs-validation')
+
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
 {% endblock %}
