@@ -10,7 +10,6 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images/', blank=True, null=True)
 
-
     def publish(self):
         self.published_date = timezone.now()
         self.save()
@@ -22,3 +21,15 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Bookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey("MainApp.Post", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "post")
+
+    def __str__(self):
+        return f"{self.user.username} - {self.post.title}"

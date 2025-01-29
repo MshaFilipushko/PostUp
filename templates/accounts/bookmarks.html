@@ -3,8 +3,28 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="container text-center">
-    <h1>{{ title }}</h1>
-    <p>Здесь будут отображаться закладки.</p>
+<div class="container">
+    <h1 class="mb-4">{{ title }}</h1>
+
+    {% if bookmarks %}
+        <div class="row">
+            {% for bookmark in bookmarks %}
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ bookmark.post.title }}</h5>
+                            <p class="card-text">{{ bookmark.post.content|truncatechars:150 }}</p>
+                            <a href="{% url 'post_detail' bookmark.post.pk %}" class="btn btn-primary">Читать</a>
+                            <button class="btn btn-warning btn-sm remove-bookmark" data-post-id="{{ bookmark.post.pk }}">
+                                <i class="fas fa-bookmark"></i> Удалить из закладок
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>У вас пока нет закладок.</p>
+    {% endif %}
 </div>
 {% endblock %}

@@ -39,3 +39,15 @@
         footer {
             flex-shrink: 0; /* Футер не сжимается */
         }
+
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #6c757d; /* Цвет как в базовом шаблоне */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }

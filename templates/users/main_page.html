@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-
+{% load static %}
+<script src="{% static 'js/bookmarks.js' %}" defer></script>
 {% block content %}
 <div class="row">
     <!-- Боковая навигация -->
@@ -7,28 +8,13 @@
         <h5>Темы</h5>
         <ul class="list-group">
             <li class="list-group-item dropdown">
-                <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Игры</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Экшен</a></li>
-                    <li><a class="dropdown-item" href="#">РПГ</a></li>
-                    <li><a class="dropdown-item" href="#">Шутеры</a></li>
-                </ul>
+                <a href="#">Игры</a>
             </li>
             <li class="list-group-item dropdown">
-                <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Фильмы</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Драмы</a></li>
-                    <li><a class="dropdown-item" href="#">Боевики</a></li>
-                    <li><a class="dropdown-item" href="#">Комедии</a></li>
-                </ul>
+                <a href="#">Фильмы</a>
             </li>
             <li class="list-group-item dropdown">
-                <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Сериалы</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Фантастика</a></li>
-                    <li><a class="dropdown-item" href="#">Детективы</a></li>
-                    <li><a class="dropdown-item" href="#">Мелодрамы</a></li>
-                </ul>
+                <a href="#">Сериалы</a>
             </li>
         </ul>
     </aside>
@@ -45,20 +31,25 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div class="d-flex align-items-center">
                                 <!-- Аватарка пользователя -->
-                                {% if post.author.profile.avatar %}
-                                    <img src="{{ post.author.profile.avatar.url }}" alt="{{ post.author.username }}" class="rounded-circle me-2" style="width: 40px; height: 40px;">
-                                {% else %}
-                                    <div class="rounded-circle bg-secondary me-2" style="width: 40px; height: 40px;"></div>
-                                {% endif %}
+                                <div class="avatar-circle me-2">
+                                    {{ post.author.username|first|upper }}
+                                </div>
                                 <!-- Имя пользователя -->
                                 <a href="{% url 'user_profile' post.author.username %}" class="text-decoration-none text-dark">
                                     <strong>{{ post.author.username }}</strong>
                                 </a>
                             </div>
                             <!-- Кнопка "Подписаться" (отображается только если пользователь не автор статьи) -->
-                            {% if request.user != post.author %}
-                                <button class="btn btn-outline-primary btn-sm">Подписаться</button>
-                            {% endif %}
+
+                            <div class="d-flex align-items-center gap-2">
+                                {% if request.user != post.author %}
+                                    <button class="btn btn-outline-primary btn-sm">Подписаться</button>
+                                {% endif %}
+                                <button class="btn {% if post in request.user.bookmark_set.all %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm bookmark-btn" data-post-id="{{ post.pk }}">
+                                    <i class="fas fa-bookmark"></i> <span>{% if post in request.user.bookmark_set.all %}В закладках{% else %}Закладки{% endif %}</span>
+                                </button>
+                            </div>
+
                         </div>
 
                         <!-- Дата публикации -->

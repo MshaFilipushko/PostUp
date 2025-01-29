@@ -1,6 +1,7 @@
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Post
+from .models import Post, Bookmark
 from .forms import PostForm
 
 
@@ -58,3 +59,16 @@ def edit_post(request, pk):
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     return render(request, 'site/post_detail.html', {'post': post})
+
+
+@login_required
+def toggle_bookmark(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    # Попытка получить закладку
+    bookmark, created = Bookmark.objects.get_or_create(user=request.user, post=post)
+
+    if not created:
+        bookmark.delete()
+        return JsonResponse({"bookmarked": False})
+
+    return JsonResponse({"bookmarked": True})
