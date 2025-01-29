@@ -7,9 +7,15 @@
         <div class="d-flex align-items-center mb-4">
             <div class="avatar-circle me-2">{{ profile_user.username|first|upper }}</div>
             <h3>{{ profile_user.username }}</h3>
-            <!-- Кнопка "Подписаться" (отображается только если пользователь не автор статьи) -->
             {% if request.user != profile_user %}
-                <button class="btn btn-outline-primary ms-auto">Подписаться</button>
+                <form method="post" action="{% url 'toggle_subscription' profile_user.username %}" class="ms-auto">
+                    {% csrf_token %}
+                    {% if is_subscribed %}
+                        <button type="submit" class="btn btn-danger btn-sm">Отписаться</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary btn-sm">Подписаться</button>
+                    {% endif %}
+                </form>
             {% endif %}
         </div>
         <!-- Секция с постами пользователя -->

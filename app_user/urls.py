@@ -13,5 +13,7 @@ urlpatterns = [
     path('settings/', views.settings, name='settings'),
     path('profile/<str:username>/', views.user_profile, name='user_profile'),
     path('subs/', views.subs, name='subs'),
-
+    path('accounts/user/<str:username>/', views.user_profile, name='user_profile'),
+    path('accounts/toggle_subscription/<str:username>/', views.toggle_subscription, name='toggle_subscription'),
+    path('accounts/subscriptions/', views.subscriptions_list, name='subs'),
 ]

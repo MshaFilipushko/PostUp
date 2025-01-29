@@ -26,9 +26,6 @@
                                 </div>
                                 <!-- Кнопка "Подписаться" (отображается только если пользователь не автор статьи) -->
                                 <div class="d-flex align-items-center gap-2">
-                                    {% if request.user != post.author %}
-                                        <button class="btn btn-outline-primary btn-sm">Подписаться</button>
-                                    {% endif %}
                                     <form method="post" action="{% url 'toggle_bookmark' post.pk %}">
                                         {% csrf_token %}
                                         {% with is_bookmarked=item.is_bookmarked %}

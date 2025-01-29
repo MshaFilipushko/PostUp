@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DeleteView
 
-from .models import Post, Bookmark
+from .models import Post, Bookmark, Subscription
 from .forms import PostForm
 
 
@@ -118,3 +119,5 @@ def bookmarks_list(request):
         'bookmarks': bookmarks,
     }
     return render(request, 'accounts/bookmarks.html', context)
+
+

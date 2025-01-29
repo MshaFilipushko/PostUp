@@ -30,3 +30,12 @@ class Bookmark(models.Model):
 
     class Meta:
         unique_together = ('user', 'post')  # Запрещаем дубликаты
+
+
+class Subscription(models.Model):
+    subscriber = models.ForeignKey(User, related_name='subscriptions', on_delete=models.CASCADE)
+    target_user = models.ForeignKey(User, related_name='subscribers', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('subscriber', 'target_user')
