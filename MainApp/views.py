@@ -94,5 +94,10 @@ def toggle_bookmark(request, post_id):
 
 @login_required
 def bookmarks_list(request):
-    bookmarks = Bookmark.objects.filter(user=request.user).select_related('post')
-    return render(request, 'accounts/bookmarks.html', {'bookmarks': bookmarks})
+    # Получаем все закладки пользователя и сортируем их по дате создания в обратном порядке
+    bookmarks = Bookmark.objects.filter(user=request.user).select_related('post').order_by('-created_at')
+
+    context = {
+        'bookmarks': bookmarks,
+    }
+    return render(request, 'accounts/bookmarks.html', context)

@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <div class="container">
-    <h3>Профиль пользователя: <div class="avatar-circle me-2">{{ profile_user.username|first|upper }}</div> {{ profile_user.username }}</h3>
-
+    <div class="d-flex align-items-center mb-4">
+        <div class="avatar-circle me-2">{{ profile_user.username|first|upper }}</div>
+        <h3>{{ profile_user.username }}</h3>
+    </div>
     <!-- Секция с постами пользователя -->
     <h2 class="mt-4">Статьи пользователя</h2>
     {% if posts %}
