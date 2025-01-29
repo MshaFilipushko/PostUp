@@ -2,17 +2,18 @@
 {% load static %}
 {% block content %}
 <div class="row">  <!-- Добавляем обертку row -->
-
     <!-- Основной контент -->
     <section class="col-md-9">  <!-- Ограничиваем ширину как на главной -->
         <div class="d-flex align-items-center mb-4">
             <div class="avatar-circle me-2">{{ profile_user.username|first|upper }}</div>
             <h3>{{ profile_user.username }}</h3>
+            <!-- Кнопка "Подписаться" (отображается только если пользователь не автор статьи) -->
+            {% if request.user != profile_user %}
+                <button class="btn btn-outline-primary ms-auto">Подписаться</button>
+            {% endif %}
         </div>
-
         <!-- Секция с постами пользователя -->
         <h2 class="mt-4">Статьи пользователя</h2>
-
         {% if posts %}
             {% for post in posts %}
                 <!-- Повторяем структуру карточки из главной страницы -->
@@ -28,21 +29,29 @@
                                     <strong>{{ post.author.username }}</strong>
                                 </a>
                             </div>
-                            <p class="card-text text-muted mb-2">
-                                Опубликовано: {{ post.published_date|date:"d.m.Y H:i" }}
-                            </p>
+                            <!-- Кнопка "Закладка" -->
+                            <form method="post" action="{% url 'toggle_bookmark' post.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn {% if post.is_bookmarked %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm">
+                                    <i class="fas fa-bookmark"></i> <span>{% if post.is_bookmarked %}В закладках{% else %}Закладки{% endif %}</span>
+                                </button>
+                            </form>
                         </div>
-
-                        <!-- Тело статьи -->
+                        <!-- Дата публикации -->
+                        <p class="card-text text-muted mb-2">
+                            Опубликовано: {{ post.published_date|date:"d.m.Y H:i" }}
+                        </p>
+                        <!-- Заголовок статьи -->
                         <h5 class="card-title">{{ post.title|default:"Без заголовка" }}</h5>
+                        <!-- Контент статьи -->
                         <p class="card-text">{{ post.content|truncatechars:200 }}</p>
-
+                        <!-- Изображение статьи (если есть) -->
                         {% if post.image %}
                             <div class="text-center">
                                 <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3" style="max-width: 100%;">
                             </div>
                         {% endif %}
-
+                        <!-- Кнопка "Читать далее" -->
                         <p><a href="{% url 'post_detail' post.pk %}" class="btn btn-primary">Читать далее</a></p>
                     </div>
                 </div>
@@ -51,7 +60,6 @@
             <p>У пользователя пока нет статей.</p>
         {% endif %}
     </section>
-
     <!-- Пустая колонка для сохранения структуры -->
     <aside class="col-md-3">
         <!-- Здесь может быть сайдбар, если нужно -->

@@ -73,7 +73,17 @@ def edit_post(request, pk):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    return render(request, 'site/post_detail.html', {'post': post})
+
+    # Получаем состояние закладки только для авторизованных пользователей
+    if request.user.is_authenticated:
+        post.is_bookmarked = Bookmark.objects.filter(user=request.user, post=post).exists()
+    else:
+        post.is_bookmarked = False
+
+    context = {
+        'post': post,
+    }
+    return render(request, 'site/post_detail.html', context)
 
 
 class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -99,6 +109,10 @@ def toggle_bookmark(request, post_id):
 def bookmarks_list(request):
     # Получаем все закладки пользователя и сортируем их по дате создания в обратном порядке
     bookmarks = Bookmark.objects.filter(user=request.user).select_related('post').order_by('-created_at')
+
+    # Добавляем информацию о состоянии закладок (уже закладан или нет)
+    for bookmark in bookmarks:
+        bookmark.is_bookmarked = True  # Все посты в списке закладок уже закладаны
 
     context = {
         'bookmarks': bookmarks,

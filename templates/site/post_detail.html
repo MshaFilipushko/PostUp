@@ -1,21 +1,61 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <div class="container mt-5">
-    <h2>{{ post.title|default:"Без заголовка" }}</h2>
-    <p>Автор: {{ post.author.username }}</p>
-    <p>Дата публикации: {{ post.published_date }}</p>
-    {% if post.image %}
-        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid">
-    {% endif %}
-    <p>{{ post.content }}</p>
-    {% if user == post.author %}
-    <a href="{% url 'edit_post' pk=post.pk %}" class="btn btn-secondary">Редактировать</a>
-    <form action="{% url 'delete_post' pk=post.pk %}" method="POST" class="d-inline">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
-    </form>
-    {% endif %}
+    <div class="card">
+        <div class="card-body">
+            <!-- Заголовок поста -->
+            <!-- Кнопка "Закладка" -->
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'toggle_bookmark' post.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn {% if post.is_bookmarked %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm float-end">
+                        <i class="fas fa-bookmark"></i> <span>{% if post.is_bookmarked %}В закладках{% else %}Закладки{% endif %}</span>
+                    </button>
+                </form>
+            {% endif %}
+            <h2 class="card-title">{{ post.title|default:"Без заголовка" }}</h2>
 
+            <!-- Информация о посте -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center">
+                    <!-- Аватарка пользователя (если есть) -->
+                    <div class="avatar-circle me-2">
+                        {{ post.author.username|first|upper }}
+                    </div>
+
+                    <!-- Имя автора с ссылкой на профиль -->
+                    <a href="{% url 'user_profile' post.author.username %}" class="text-decoration-none text-dark">
+                        <strong>{{ post.author.username }}</strong>
+                    </a>
+                </div>
+                <!-- Дата публикации -->
+                <p class="mb-0 text-muted small">Дата публикации: {{ post.published_date|date:"d.m.Y H:i" }}</p>
+            </div>
+
+
+
+            <!-- Изображение поста (если есть) -->
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3 rounded">
+            {% endif %}
+
+            <!-- Контент поста -->
+            <p class="card-text">{{ post.content }}</p>
+
+            <!-- Панель действий для автора поста -->
+            {% if user == post.author %}
+                <div class="d-flex justify-content-end mt-3">
+                    <!-- Кнопка редактирования -->
+                    <a href="{% url 'edit_post' pk=post.pk %}" class="btn btn-secondary me-2">Редактировать</a>
+                    <!-- Форма удаления поста -->
+                    <form action="{% url 'delete_post' pk=post.pk %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}

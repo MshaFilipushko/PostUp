@@ -19,9 +19,20 @@
                                     <strong>{{ bookmark.post.author.username }}</strong>
                                 </a>
                             </div>
-                            <span class="text-muted small">
-                                Добавлено: {{ bookmark.created_at|date:"d.m.Y H:i" }}
-                            </span>
+                            <!-- Кнопка "Закладка" и дата добавления -->
+                            <div class="d-flex align-items-center">
+                                <!-- Кнопка "Закладка" -->
+                                <form method="post" action="{% url 'toggle_bookmark' bookmark.post.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn {% if bookmark.is_bookmarked %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm">
+                                        <i class="fas fa-bookmark"></i> <span>{% if bookmark.is_bookmarked %}В закладках{% else %}Закладки{% endif %}</span>
+                                    </button>
+                                </form>
+                                <!-- Дата добавления закладки -->
+                                <span class="ms-2 text-muted small">
+                                    Добавлено: {{ bookmark.created_at|date:"d.m.Y H:i" }}
+                                </span>
+                            </div>
                         </div>
                         <h5 class="card-title">{{ bookmark.post.title }}</h5>
                         <p class="card-text">{{ bookmark.post.content|truncatechars:200 }}</p>

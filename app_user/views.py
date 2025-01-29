@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 
-from MainApp.models import Post
+from MainApp.models import Post, Bookmark
 from app_user.models import CustomUserCreationForm
 
 
@@ -48,7 +48,18 @@ def subs(request):
 def user_profile(request, username):
     profile_user = get_object_or_404(User, username=username)
     posts = Post.objects.filter(author=profile_user).order_by('-published_date')
-    return render(request, 'accounts/user_profile.html', {
+
+    # Проверяем, авторизован ли пользователь, и получаем его закладки
+    if request.user.is_authenticated:
+        bookmarks = Bookmark.objects.filter(user=request.user)
+        for post in posts:
+            post.is_bookmarked = bookmarks.filter(post=post).exists()
+    else:
+        for post in posts:
+            post.is_bookmarked = False
+
+    context = {
         'profile_user': profile_user,
         'posts': posts,
-    })
+    }
+    return render(request, 'accounts/user_profile.html', context)
