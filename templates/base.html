@@ -11,26 +11,46 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Добавленные стили для футера -->
+    <style>
+        /* Стили для выравнивания элементов в навигации */
+        .navbar-nav {
+            display: flex;
+            align-items: center; /* Выравниваем элементы по вертикали */
+        }
+        .nav-item {
+            display: flex;
+            align-items: center; /* Выравниваем элементы внутри nav-item */
+        }
+        .avatar-circle {
+            width: 2rem;
+            height: 2rem;
+            background-color: #ccc;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <!-- Навигация -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="/">RusDonations</a>
+            <a class="navbar-brand d-flex align-items-center" href="/">RusDonations</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Главная</a>
+                        <a class="nav-link d-flex align-items-center" href="/">Главная</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'about' %}">О нас</a>
+                        <a class="nav-link d-flex align-items-center" href="{% url 'about' %}">О нас</a>
                     </li>
-
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'contact' %}">Связаться</a>
+                        <a class="nav-link d-flex align-items-center" href="{% url 'contact' %}">Связаться</a>
                     </li>
                     <!-- Кнопка "Написать" -->
                     <li class="nav-item">
@@ -72,39 +92,69 @@
                                 <li><a class="dropdown-item" href="{% url 'bookmarks' %}">Закладки</a></li>
                                 <li><a class="dropdown-item" href="{% url 'donations' %}">Донаты</a></li>
                                 <li><a class="dropdown-item" href="{% url 'settings' %}">Настройки</a></li>
+                                <li><a class="dropdown-item" href="{% url 'settings' %}">Подписки</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Выйти</a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Войти</a>
+                            <a class="nav-link d-flex align-items-center" href="{% url 'login' %}">Войти</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
+                            <a class="nav-link d-flex align-items-center" href="{% url 'register' %}">Регистрация</a>
                         </li>
                     {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
-
     <!-- Основное содержимое -->
     <main class="container my-5">
-        {% block content %}
-        <!-- Сюда будет подставляться содержимое других шаблонов -->
-        {% endblock %}
-    </main>
+    <div class="row">
+        <!-- Боковая навигация (перенесено из дочернего шаблона) -->
+        <aside class="col-md-3">
+            <ul class="list-group">
+                <li class="list-group-item dropdown">
+                    <a href="#">Свежее</a>
+                </li>
+                <li class="list-group-item dropdown">
+                    <a href="#">Мои подписки</a>
+                </li>
+                <li class="list-group-item dropdown">
+                    <a href="#">Популярное</a>
+                </li>
+            </ul>
+            <p></p>
+            <h5>Темы</h5>
+            <ul class="list-group">
+                <li class="list-group-item dropdown">
+                    <a href="#">Игры</a>
+                </li>
+                <li class="list-group-item dropdown">
+                    <a href="#">Фильмы</a>
+                </li>
+                <li class="list-group-item dropdown">
+                    <a href="#">Сериалы</a>
+                </li>
+            </ul>
+        </aside>
 
+        <!-- Основной контент -->
+        <div class="col-md-9">
+            {% block content %}
+            <!-- Сюда будет подставляться содержимое других шаблонов -->
+            {% endblock %}
+        </div>
+    </div>
+</main>
     <!-- Подвал -->
     <footer class="bg-dark text-white py-3 mt-auto">
         <div class="container text-center">
             <p class="mb-0">© 2025 RusDonations. All rights reserved.</p>
         </div>
     </footer>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>
