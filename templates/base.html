@@ -117,10 +117,10 @@
         <aside class="col-md-3">
             <ul class="list-group">
                 <li class="list-group-item dropdown">
-                    <a href="#">Свежее</a>
+                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'index' %}">Свежие статьи</a>
                 </li>
                 <li class="list-group-item dropdown">
-                    <a href="#">Мои подписки</a>
+                    <a class="nav-link {% if request.path == '/subscribed/' %}active{% endif %}" href="{% url 'subscribed_posts' %}">Мои подписки</a>
                 </li>
                 <li class="list-group-item dropdown">
                     <a href="#">Популярное</a>

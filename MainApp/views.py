@@ -121,3 +121,49 @@ def bookmarks_list(request):
     return render(request, 'accounts/bookmarks.html', context)
 
 
+def fresh_posts(request):
+    posts_with_bookmarks = []
+    if request.user.is_authenticated:
+        posts = Post.objects.filter(published_date__isnull=False).order_by('-published_date')
+        bookmarks = Post.objects.filter(bookmarks__user=request.user)
+        for post in posts:
+            posts_with_bookmarks.append({
+                'post': post,
+                'is_bookmarked': post in bookmarks
+            })
+    else:
+        posts = Post.objects.filter(published_date__isnull=False).order_by('-published_date')
+        for post in posts:
+            posts_with_bookmarks.append({
+                'post': post,
+                'is_bookmarked': False
+            })
+
+    context = {
+        'posts_with_bookmarks': posts_with_bookmarks,
+    }
+    return render(request, 'users/main_page.html', context)
+
+@login_required
+def subscribed_posts(request):
+    # Получаем всех пользователей, на которых подписан текущий пользователь
+    subscribed_users = request.user.subscriptions.values_list('target_user', flat=True)
+
+    # Получаем все посты этих пользователей
+    posts = Post.objects.filter(author__in=subscribed_users).order_by('-published_date')
+
+    # Получаем все закладки текущего пользователя
+    bookmarks = Bookmark.objects.filter(user=request.user).values_list('post_id', flat=True)
+
+    # Формируем список постов с информацией о закладках
+    posts_with_bookmarks = []
+    for post in posts:
+        posts_with_bookmarks.append({
+            'post': post,
+            'is_bookmarked': post.id in bookmarks
+        })
+
+    context = {
+        'posts_with_bookmarks': posts_with_bookmarks,
+    }
+    return render(request, 'users/subscribed_posts.html', context)
