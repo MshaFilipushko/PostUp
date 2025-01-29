@@ -12,5 +12,6 @@ urlpatterns = [
     path('donations/', views.donations, name='donations'),
     path('settings/', views.settings, name='settings'),
     path('profile/<str:username>/', views.user_profile, name='user_profile'),
+    path('subs/', views.subs, name='subs'),
 
 ]

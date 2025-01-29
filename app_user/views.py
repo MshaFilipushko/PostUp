@@ -41,6 +41,9 @@ def donations(request):
 def settings(request):
     return render(request, 'accounts/settings.html', {'title': 'Настройки'})
 
+def subs(request):
+    return render(request, 'accounts/subs.html', {'title': 'Подписки'})
+
 
 def user_profile(request, username):
     profile_user = get_object_or_404(User, username=username)
