@@ -1,6 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.generic import DeleteView
+
 from .models import Post, Bookmark
 from .forms import PostForm
 
@@ -72,3 +75,12 @@ def toggle_bookmark(request, post_id):
         return JsonResponse({"bookmarked": False})
 
     return JsonResponse({"bookmarked": True})
+
+
+class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    success_url = '/'  # URL для перенаправления после удаления
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author

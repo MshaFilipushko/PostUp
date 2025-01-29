@@ -10,7 +10,12 @@
     {% endif %}
     <p>{{ post.content }}</p>
     {% if user == post.author %}
-        <a href="{% url 'edit_post' pk=post.pk %}" class="btn btn-secondary">Редактировать</a>
+    <a href="{% url 'edit_post' pk=post.pk %}" class="btn btn-secondary">Редактировать</a>
+    <form action="{% url 'delete_post' pk=post.pk %}" method="POST" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
+    </form>
     {% endif %}
+
 </div>
 {% endblock %}
