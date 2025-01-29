@@ -29,6 +29,7 @@ def profile(request, pk):
     }
     return render(request, 'accounts/profile.html', context)
 
+
 def bookmarks(request):
     return render(request, 'accounts/bookmarks.html', {'title': 'Закладки'})
 

@@ -5,15 +5,23 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DeleteView
 
-from .models import Post
+from .models import Post, Bookmark
 from .forms import PostForm
 
 
+@login_required
 def index(request):
     posts = Post.objects.filter(published_date__isnull=False).order_by('-published_date')
+    bookmarks = Bookmark.objects.filter(user=request.user)
+    posts_with_bookmarks = []
+    for post in posts:
+        posts_with_bookmarks.append({
+            'post': post,
+            'is_bookmarked': bookmarks.filter(post=post).exists()
+        })
     context = {
         'title': 'Главная страница',
-        'posts': posts,
+        'posts_with_bookmarks': posts_with_bookmarks,
     }
     return render(request, 'users/main_page.html', context)
 
@@ -72,3 +80,19 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+
+
+@login_required
+def toggle_bookmark(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    bookmark, created = Bookmark.objects.get_or_create(user=request.user, post=post)
+    if not created:
+        bookmark.delete()
+    # Перенаправляем пользователя на ту же страницу, где он был
+    return redirect(request.META.get('HTTP_REFERER', 'index'))
+
+
+@login_required
+def bookmarks_list(request):
+    bookmarks = Bookmark.objects.filter(user=request.user).select_related('post')
+    return render(request, 'accounts/bookmarks.html', {'bookmarks': bookmarks})

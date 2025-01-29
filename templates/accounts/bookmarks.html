@@ -6,6 +6,48 @@
 {% block content %}
 <div class="container">
     <h1 class="mb-4">Мои закладки</h1>
-    <p>Тут будут ваши закладки</p>
+
+    {% if bookmarks %}
+        <div class="row">
+            {% for bookmark in bookmarks %}
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- Повторяем структуру карточки из main.html -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle me-2">
+                                        {{ bookmark.post.author.username|first|upper }}
+                                    </div>
+                                    <a href="{% url 'user_profile' bookmark.post.author.username %}" class="text-decoration-none text-dark">
+                                        <strong>{{ bookmark.post.author.username }}</strong>
+                                    </a>
+                                </div>
+                                <span class="text-muted small">
+                                    Добавлено: {{ bookmark.created_at|date:"d.m.Y H:i" }}
+                                </span>
+                            </div>
+
+                            <h5 class="card-title">{{ bookmark.post.title }}</h5>
+                            <p class="card-text">{{ bookmark.post.content|truncatechars:200 }}</p>
+
+                            {% if bookmark.post.image %}
+                                <img src="{{ bookmark.post.image.url }}"
+                                     alt="{{ bookmark.post.title }}"
+                                     class="img-fluid mb-3">
+                            {% endif %}
+                            <p>
+                            <a href="{% url 'post_detail' bookmark.post.pk %}"
+                               class="btn btn-primary"  >Читать далее</a></p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            У вас пока нет сохранённых закладок
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

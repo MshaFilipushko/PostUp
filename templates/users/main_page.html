@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load static %}
-<script src="{% static 'js/bookmarks.js' %}" defer></script>
 {% block content %}
 <div class="row">
     <!-- Боковая навигация -->
@@ -18,62 +17,61 @@
             </li>
         </ul>
     </aside>
-
     <!-- Основной контент -->
     <section class="col-md-9">
         <h1 class="mb-4">Последние статьи</h1>
 
-        {% if posts %}
-            {% for post in posts %}
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <!-- Хедер статьи -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="d-flex align-items-center">
-                                <!-- Аватарка пользователя -->
-                                <div class="avatar-circle me-2">
-                                    {{ post.author.username|first|upper }}
+        {% if posts_with_bookmarks %}
+            {% for item in posts_with_bookmarks %}
+                {% with post=item.post %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <!-- Хедер статьи -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <!-- Аватарка пользователя -->
+                                    <div class="avatar-circle me-2">
+                                        {{ post.author.username|first|upper }}
+                                    </div>
+                                    <!-- Имя пользователя -->
+                                    <a href="{% url 'user_profile' post.author.username %}" class="text-decoration-none text-dark">
+                                        <strong>{{ post.author.username }}</strong>
+                                    </a>
                                 </div>
-                                <!-- Имя пользователя -->
-                                <a href="{% url 'user_profile' post.author.username %}" class="text-decoration-none text-dark">
-                                    <strong>{{ post.author.username }}</strong>
-                                </a>
+                                <!-- Кнопка "Подписаться" (отображается только если пользователь не автор статьи) -->
+                                <div class="d-flex align-items-center gap-2">
+                                    {% if request.user != post.author %}
+                                        <button class="btn btn-outline-primary btn-sm">Подписаться</button>
+                                    {% endif %}
+                                    <form method="post" action="{% url 'toggle_bookmark' post.pk %}">
+                                        {% csrf_token %}
+                                        {% with is_bookmarked=item.is_bookmarked %}
+                                            <button type="submit" class="btn {% if is_bookmarked %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm">
+                                                <i class="fas fa-bookmark"></i> <span>{% if is_bookmarked %}В закладках{% else %}Закладки{% endif %}</span>
+                                            </button>
+                                        {% endwith %}
+                                    </form>
+                                </div>
                             </div>
-                            <!-- Кнопка "Подписаться" (отображается только если пользователь не автор статьи) -->
-
-                            <div class="d-flex align-items-center gap-2">
-                                {% if request.user != post.author %}
-                                    <button class="btn btn-outline-primary btn-sm">Подписаться</button>
-                                {% endif %}
-                                <button class="btn {% if post in request.user.bookmark_set.all %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm bookmark-btn" data-post-id="{{ post.pk }}">
-                                    <i class="fas fa-bookmark"></i> <span>{% if post in request.user.bookmark_set.all %}В закладках{% else %}Закладки{% endif %}</span>
-                                </button>
-                            </div>
-
+                            <!-- Дата публикации -->
+                            <p class="card-text text-muted mb-2">
+                                Опубликовано: {{ post.published_date|date:"d.m.Y H:i" }}
+                            </p>
+                            <!-- Заголовок статьи -->
+                            <h5 class="card-title">{{ post.title|default:"Без заголовка" }}</h5>
+                            <!-- Контент статьи -->
+                            <p class="card-text">{{ post.content|truncatechars:200 }}</p>
+                            <!-- Изображение статьи (если есть) -->
+                            {% if post.image %}
+                                <div class="text-center">
+                                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3" style="max-width: 100%;">
+                                </div>
+                            {% endif %}
+                            <!-- Кнопка "Читать далее" -->
+                            <p><a href="{% url 'post_detail' post.pk %}" class="btn btn-primary">Читать далее</a></p>
                         </div>
-
-                        <!-- Дата публикации -->
-                        <p class="card-text text-muted mb-2">
-                            Опубликовано: {{ post.published_date|date:"d.m.Y H:i" }}
-                        </p>
-
-                        <!-- Заголовок статьи -->
-                        <h5 class="card-title">{{ post.title|default:"Без заголовка" }}</h5>
-
-                        <!-- Контент статьи -->
-                        <p class="card-text">{{ post.content|truncatechars:200 }}</p>
-
-                        <!-- Изображение статьи (если есть) -->
-                        {% if post.image %}
-                            <div class="text-center">
-                                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3" style="max-width: 100%;">
-                            </div>
-                        {% endif %}
-
-                        <!-- Кнопка "Читать далее" -->
-                        <p><a href="{% url 'post_detail' post.pk %}" class="btn btn-primary">Читать далее</a></p>
                     </div>
-                </div>
+                {% endwith %}
             {% endfor %}
         {% else %}
             <p>Пока нет статей.</p>
