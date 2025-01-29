@@ -9,16 +9,19 @@ from .models import Post, Bookmark
 from .forms import PostForm
 
 
-@login_required
 def index(request):
     posts = Post.objects.filter(published_date__isnull=False).order_by('-published_date')
-    bookmarks = Bookmark.objects.filter(user=request.user)
+
+    # Получаем закладки только для авторизованных пользователей
+    bookmarks = Bookmark.objects.filter(user=request.user) if request.user.is_authenticated else None
+
     posts_with_bookmarks = []
     for post in posts:
         posts_with_bookmarks.append({
             'post': post,
-            'is_bookmarked': bookmarks.filter(post=post).exists()
+            'is_bookmarked': bookmarks.filter(post=post).exists() if request.user.is_authenticated else False
         })
+
     context = {
         'title': 'Главная страница',
         'posts_with_bookmarks': posts_with_bookmarks,

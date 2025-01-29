@@ -116,8 +116,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = 'login'  # Указывает на name вашего URL для входа
+LOGIN_REDIRECT_URL = '/'  # Перенаправление после успешного входа
+LOGOUT_REDIRECT_URL = '/'  # Перенаправление после выхода
 STATIC_URL = 'static/'
 SITE_ID = 1
 STATICFILES_DIRS = [
@@ -125,7 +126,7 @@ STATICFILES_DIRS = [
 ]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-LOGIN_URL = '/login/'  # URL для перенаправления неавторизованных пользователей
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
