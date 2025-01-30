@@ -1,66 +1,91 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block content %}
-    <section class="col-md-9">
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-body">
-            <!-- Заголовок поста -->
-            <!-- Кнопка "Закладка" -->
-            {% if user.is_authenticated %}
-                <form method="post" action="{% url 'toggle_bookmark' post.pk %}" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn {% if post.is_bookmarked %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm float-end">
-                        <i class="fas fa-bookmark"></i> <span>{% if post.is_bookmarked %}В закладках{% else %}Закладки{% endif %}</span>
-                    </button>
-                </form>
-            {% endif %}
-            <h2 class="card-title">{{ post.title|default:"Без заголовка" }}</h2>
+<section class="col-md-9">
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-body">
+                <!-- Заголовок поста -->
+                <h2 class="card-title">{{ post.title|default:"Без заголовка" }}</h2>
 
-            <!-- Информация о посте -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="d-flex align-items-center">
-                    <!-- Аватарка пользователя (если есть) -->
-                    <div class="avatar-circle me-2">
-                        {{ post.author.username|first|upper }}
+                <!-- Информация о посте -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center">
+                        <!-- Аватарка пользователя -->
+                        <div class="avatar-circle me-2">
+                            {{ post.author.username|first|upper }}
+                        </div>
+                        <!-- Имя автора с ссылкой на профиль -->
+                        <a href="{% url 'user_profile' post.author.username %}" class="text-decoration-none text-dark">
+                            <strong>{{ post.author.username }}</strong>
+                        </a>
                     </div>
-
-                    <!-- Имя автора с ссылкой на профиль -->
-                    <a href="{% url 'user_profile' post.author.username %}" class="text-decoration-none text-dark">
-                        <strong>{{ post.author.username }}</strong>
-                    </a>
+                    <!-- Дата публикации -->
+                    <p class="mb-0 text-muted small">Дата публикации: {{ post.published_date|date:"d.m.Y H:i" }}</p>
                 </div>
-                <!-- Дата публикации -->
-                <p class="mb-0 text-muted small">Дата публикации: {{ post.published_date|date:"d.m.Y H:i" }}</p>
+
+                <!-- Изображение поста (если есть) -->
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3 rounded">
+                {% endif %}
+
+                <!-- Контент поста -->
+                <p class="card-text">{{ post.content }}</p>
+
+                <!-- Панель действий для автора поста -->
+                {% if user == post.author %}
+                    <div class="d-flex justify-content-end mt-3">
+                        <!-- Кнопка редактирования -->
+                        <a href="{% url 'edit_post' pk=post.pk %}" class="btn btn-secondary me-2">Редактировать</a>
+                        <!-- Форма удаления поста -->
+                        <form action="{% url 'delete_post' pk=post.pk %}" method="POST" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
+                        </form>
+                    </div>
+                {% endif %}
             </div>
+        </div>
 
+        <!-- Блок комментариев -->
+        <div class="mt-5">
+            <h4>Комментарии ({{ comments.count }})</h4>
 
-
-            <!-- Изображение поста (если есть) -->
-            {% if post.image %}
-                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3 rounded">
-            {% endif %}
-
-            <!-- Контент поста -->
-            <p class="card-text">{{ post.content }}</p>
-
-            <!-- Панель действий для автора поста -->
-            {% if user == post.author %}
-                <div class="d-flex justify-content-end mt-3">
-                    <!-- Кнопка редактирования -->
-                    <a href="{% url 'edit_post' pk=post.pk %}" class="btn btn-secondary me-2">Редактировать</a>
-                    <!-- Форма удаления поста -->
-                    <form action="{% url 'delete_post' pk=post.pk %}" method="POST" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
-                    </form>
+            <!-- Список комментариев -->
+            {% for comment in comments %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="avatar-circle me-2">
+                                {{ comment.author.username|first|upper }}
+                            </div>
+                            <strong>{{ comment.author.username }}</strong>
+                            <small class="text-muted ms-2">{{ comment.created_at|timesince }} назад</small>
+                        </div>
+                        <p>{{ comment.content }}</p>
+                    </div>
                 </div>
+            {% empty %}
+                <p>Пока нет комментариев.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Форма для добавления комментария -->
+        <div class="mt-4">
+            <h4>Добавить комментарий</h4>
+            {% if user.is_authenticated %}
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.content.label_tag }}
+                        {{ form.content }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                </form>
+            {% else %}
+                <p>Чтобы оставить комментарий, <a href="{% url 'login' %}">войдите</a>.</p>
             {% endif %}
         </div>
     </div>
-</div>
-    </section>
-
-
+</section>
 {% endblock %}

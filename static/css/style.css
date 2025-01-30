@@ -14,3 +14,22 @@
 body {
     background-color: #dbeff6;
 }
+
+.avatar-circle {
+    width: 2rem;
+    height: 2rem;
+    background-color: #ccc;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+.card {
+    margin-bottom: 1rem;
+}
+
+textarea.form-control {
+    resize: none; /* Запрет изменения размера текстового поля */
+}

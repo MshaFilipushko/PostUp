@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import DeleteView
 
 from .models import Post, Bookmark, Subscription
-from .forms import PostForm
+from .forms import PostForm, CommentForm
 
 
 def index(request):
@@ -74,17 +74,24 @@ def edit_post(request, pk):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
+    comments = post.comments.all()  # Получаем все комментарии к посту
 
-    # Получаем состояние закладки только для авторизованных пользователей
-    if request.user.is_authenticated:
-        post.is_bookmarked = Bookmark.objects.filter(user=request.user, post=post).exists()
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            return redirect('post_detail', pk=post.pk)
     else:
-        post.is_bookmarked = False
+        form = CommentForm()
 
-    context = {
+    return render(request, 'site/post_detail.html', {
         'post': post,
-    }
-    return render(request, 'site/post_detail.html', context)
+        'comments': comments,
+        'form': form,
+    })
 
 
 class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

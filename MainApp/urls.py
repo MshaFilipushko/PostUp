@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import DeletePostView
+from .views import DeletePostView, post_detail
 
 urlpatterns = [
     path('', views.index, name='index'),  # Главная станичка на views в приложении
@@ -12,4 +12,5 @@ urlpatterns = [
     path('post/<int:pk>/delete/', DeletePostView.as_view(), name='delete_post'),
     path('bookmarks/toggle/<int:post_id>/', views.toggle_bookmark, name='toggle_bookmark'),
     path('bookmarks/', views.bookmarks_list, name='bookmarks'),
+    path('post/<int:pk>/', post_detail, name='post_detail'),
 ]
