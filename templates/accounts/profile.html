@@ -8,7 +8,6 @@
             <div class="avatar-circle me-2">{{ user.username|first|upper }}</div>
             <h1>{{ user.username }}</h1>
         </div>
-
         <div class="mt-4">
             <h2>Мои статьи</h2>
             {% if posts %}
@@ -27,11 +26,13 @@
                                 </div>
                                 <small class="text-muted">{{ post.published_date|date:"d.m.Y H:i" }}</small>
                             </div>
-
                             <!-- Тело статьи -->
-                            <h5 class="card-title">{{ post.title|default:"Без заголовка" }}</h5>
+                            <h5 class="card-title">
+                                <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none text-dark">
+                                    {{ post.title|default:"Без заголовка" }}
+                                </a>
+                            </h5>
                             <p class="card-text">{{ post.content|truncatechars:200 }}</p>
-
                             {% if post.image %}
                                 <div class="text-center">
                                     <img src="{{ post.image.url }}"
@@ -40,8 +41,7 @@
                                          style="max-width: 100%; height: auto;">
                                 </div>
                             {% endif %}
-
-                            <a href="{% url 'post_detail' post.pk %}" class="btn btn-primary">Читать далее</a>
+                            <!-- Убираем кнопку "Читать далее" -->
                         </div>
                     </div>
                 {% endfor %}
@@ -50,7 +50,6 @@
             {% endif %}
         </div>
     </section>
-
     <!-- Пустая колонка для выравнивания -->
     <aside class="col-md-3"></aside>
 </div>

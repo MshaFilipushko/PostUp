@@ -47,8 +47,12 @@
                         <p class="card-text text-muted mb-2">
                             Опубликовано: {{ post.published_date|date:"d.m.Y H:i" }}
                         </p>
-                        <!-- Заголовок статьи -->
-                        <h5 class="card-title">{{ post.title|default:"Без заголовка" }}</h5>
+                        <!-- Заголовок статьи с ссылкой -->
+                        <h5 class="card-title">
+                            <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none text-dark">
+                                {{ post.title|default:"Без заголовка" }}
+                            </a>
+                        </h5>
                         <!-- Контент статьи -->
                         <p class="card-text">{{ post.content|truncatechars:200 }}</p>
                         <!-- Изображение статьи (если есть) -->
@@ -57,8 +61,7 @@
                                 <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3" style="max-width: 100%;">
                             </div>
                         {% endif %}
-                        <!-- Кнопка "Читать далее" -->
-                        <p><a href="{% url 'post_detail' post.pk %}" class="btn btn-primary">Читать далее</a></p>
+                        <!-- Убираем кнопку "Читать далее" -->
                     </div>
                 </div>
             {% endfor %}
