@@ -31,7 +31,38 @@
             align-items: center;
             font-weight: bold;
         }
+        /* Стили для основного контента */
+        main {
+            min-height: calc(100vh - 120px); /* Высота страницы минус высота навигации и футера */
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+        /* Стили для футера */
+        footer {
+            height: 60px;
+            line-height: 60px;
+        }
+        /* Стили для левой панели */
+        aside {
+            padding-right: 15px; /* Отступ справа для разделения панели и контента */
+        }
+        /* Стили для основного контента */
+        section.col-md-9 {
+            padding-left: 15px; /* Отступ слева для разделения панели и контента */
+        }
+        /* Стили для изображений */
+        .post-image {
+            width: 100%; /* Адаптивная ширина */
+            height: auto; /* Автоматическая высота */
+            object-fit: cover; /* Сохранение пропорций и обрезка */
+        }
 
+        @media (min-width: 768px) {
+            .post-image {
+                width: 1080px; /* Фиксированная ширина для больших экранов */
+                height: 620px; /* Фиксированная высота для больших экранов */
+            }
+        }
     </style>
 </head>
 <body>
@@ -112,43 +143,42 @@
     </nav>
     <!-- Основное содержимое -->
     <main class="container my-5">
-    <div class="row">
-        <!-- Боковая навигация (перенесено из дочернего шаблона) -->
-        <aside class="col-md-3">
-            <ul class="list-group">
-                <li class="list-group-item dropdown">
-                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'index' %}">Свежие статьи</a>
-                </li>
-                <li class="list-group-item dropdown">
-                    <a class="nav-link {% if request.path == '/subscribed/' %}active{% endif %}" href="{% url 'subscribed_posts' %}">Мои подписки</a>
-                </li>
-                <li class="list-group-item dropdown">
-                    <a href="#">Популярное</a>
-                </li>
-            </ul>
-            <p></p>
-            <h5>Темы</h5>
-            <ul class="list-group">
-                <li class="list-group-item dropdown">
-                    <a href="#">Игры</a>
-                </li>
-                <li class="list-group-item dropdown">
-                    <a href="#">Фильмы</a>
-                </li>
-                <li class="list-group-item dropdown">
-                    <a href="#">Сериалы</a>
-                </li>
-            </ul>
-        </aside>
-
-        <!-- Основной контент -->
-        <div class="col-md-9">
-            {% block content %}
-            <!-- Сюда будет подставляться содержимое других шаблонов -->
-            {% endblock %}
+        <div class="row">
+            <!-- Боковая навигация -->
+            <aside class="col-md-3">
+                <ul class="list-group">
+                    <li class="list-group-item dropdown">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'index' %}">Свежие статьи</a>
+                    </li>
+                    <li class="list-group-item dropdown">
+                        <a class="nav-link {% if request.path == '/subscribed/' %}active{% endif %}" href="{% url 'subscribed_posts' %}">Мои подписки</a>
+                    </li>
+                    <li class="list-group-item dropdown">
+                        <a href="#">Популярное</a>
+                    </li>
+                </ul>
+                <p></p>
+                <h5>Темы</h5>
+                <ul class="list-group">
+                    <li class="list-group-item dropdown">
+                        <a href="#">Игры</a>
+                    </li>
+                    <li class="list-group-item dropdown">
+                        <a href="#">Фильмы</a>
+                    </li>
+                    <li class="list-group-item dropdown">
+                        <a href="#">Сериалы</a>
+                    </li>
+                </ul>
+            </aside>
+            <!-- Основной контент -->
+            <section class="col-md-9">
+                {% block content %}
+                <!-- Сюда будет подставляться содержимое других шаблонов -->
+                {% endblock %}
+            </section>
         </div>
-    </div>
-</main>
+    </main>
     <!-- Подвал -->
     <footer class="bg-dark text-white py-3 mt-auto">
         <div class="container text-center">

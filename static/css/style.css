@@ -1,35 +1,16 @@
-/* Общие стили для карточек */
-.card {
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+.post-image {
+    width: 100%; /* Адаптивная ширина */
+    height: auto; /* Автоматическая высота */
+    object-fit: cover; /* Сохранение пропорций и обрезка */
 }
 
-.avatar-circle {
-    width: 32px;
-    height: 32px;
-    background-color: #ccc;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-weight: bold;
+@media (min-width: 768px) {
+    .post-image {
+        width: 1080px; /* Фиксированная ширина для больших экранов */
+        height: 620px; /* Фиксированная высота для больших экранов */
+    }
 }
-
-/* Стили для контейнера */
-.container {
-    max-width: 1200px; /* или любое другое значение, которое соответствует вашему дизайну */
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Стили для кнопок */
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #004494;
+body {
+    background-color: #dbeff6;
 }
