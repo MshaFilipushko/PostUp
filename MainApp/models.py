@@ -4,12 +4,15 @@ from django.utils import timezone
 
 
 class Post(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=200)
     content = models.TextField()
-    published_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='post_images/', blank=True, null=True)
-
+    published_date = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='post_images/', null=True, blank=True)
+    likes = models.IntegerField(default=0)
+    dislikes = models.IntegerField(default=0)
+    users_who_liked = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+    users_who_disliked = models.ManyToManyField(User, related_name='disliked_posts', blank=True)
     def publish(self):
         self.published_date = timezone.now()
         self.save()

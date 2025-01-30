@@ -174,3 +174,36 @@ def subscribed_posts(request):
         'posts_with_bookmarks': posts_with_bookmarks,
     }
     return render(request, 'users/subscribed_posts.html', context)
+
+
+def toggle_like(request, post_id):
+    if request.method == 'POST':
+        post = get_object_or_404(Post, id=post_id)
+        if request.user not in post.users_who_liked.all():
+            post.likes += 1
+            post.users_who_liked.add(request.user)
+            if request.user in post.users_who_disliked.all():
+                post.dislikes -= 1
+                post.users_who_disliked.remove(request.user)
+        else:
+            post.likes -= 1
+            post.users_who_liked.remove(request.user)
+        post.save()
+        return JsonResponse({'likes': post.likes, 'dislikes': post.dislikes})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def toggle_dislike(request, post_id):
+    if request.method == 'POST':
+        post = get_object_or_404(Post, id=post_id)
+        if request.user not in post.users_who_disliked.all():
+            post.dislikes += 1
+            post.users_who_disliked.add(request.user)
+            if request.user in post.users_who_liked.all():
+                post.likes -= 1
+                post.users_who_liked.remove(request.user)
+        else:
+            post.dislikes -= 1
+            post.users_who_disliked.remove(request.user)
+        post.save()
+        return JsonResponse({'likes': post.likes, 'dislikes': post.dislikes})
+    return JsonResponse({'error': 'Invalid request'}, status=400)

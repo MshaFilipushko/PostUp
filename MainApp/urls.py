@@ -13,4 +13,6 @@ urlpatterns = [
     path('bookmarks/toggle/<int:post_id>/', views.toggle_bookmark, name='toggle_bookmark'),
     path('bookmarks/', views.bookmarks_list, name='bookmarks'),
     path('post/<int:pk>/', post_detail, name='post_detail'),
+    path('post/<int:post_id>/like/', views.toggle_like, name='toggle_like'),
+    path('post/<int:post_id>/dislike/', views.toggle_dislike, name='toggle_dislike'),
 ]

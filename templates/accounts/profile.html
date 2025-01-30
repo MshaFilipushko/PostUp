@@ -41,6 +41,21 @@
                                          style="max-width: 100%; height: auto;">
                                 </div>
                             {% endif %}
+                            <!-- Лайки и дизлайки -->
+                            <div class="d-flex align-items-center gap-2">
+                                <form id="like-form-{{ post.id }}" method="post" action="{% url 'toggle_like' post.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm like-button" data-post-id="{{ post.id }}">
+                                        <i class="fas fa-thumbs-up"></i> <span>{{ post.likes }}</span>
+                                    </button>
+                                </form>
+                                <form id="dislike-form-{{ post.id }}" method="post" action="{% url 'toggle_dislike' post.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm dislike-button" data-post-id="{{ post.id }}">
+                                        <i class="fas fa-thumbs-down"></i> <span>{{ post.dislikes }}</span>
+                                    </button>
+                                </form>
+                            </div>
                             <!-- Убираем кнопку "Читать далее" -->
                         </div>
                     </div>
@@ -53,4 +68,57 @@
     <!-- Пустая колонка для выравнивания -->
     <aside class="col-md-3"></aside>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const likeButtons = document.querySelectorAll('.like-button');
+    const dislikeButtons = document.querySelectorAll('.dislike-button');
+
+    likeButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const postId = this.getAttribute('data-post-id');
+            const form = document.getElementById(`like-form-${postId}`);
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': form.querySelector('input[name="csrfmiddlewaretoken"]').value
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                const likesElement = this.querySelector('span');
+                const dislikesElement = document.querySelector(`#dislike-form-${postId} .dislike-button span`);
+                likesElement.textContent = data.likes;
+                dislikesElement.textContent = data.dislikes;
+            });
+        });
+    });
+
+    dislikeButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const postId = this.getAttribute('data-post-id');
+            const form = document.getElementById(`dislike-form-${postId}`);
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': form.querySelector('input[name="csrfmiddlewaretoken"]').value
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                const likesElement = document.querySelector(`#like-form-${postId} .like-button span`);
+                const dislikesElement = this.querySelector('span');
+                likesElement.textContent = data.likes;
+                dislikesElement.textContent = data.dislikes;
+            });
+        });
+    });
+});
+</script>
 {% endblock %}
