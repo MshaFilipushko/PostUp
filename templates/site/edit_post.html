@@ -2,6 +2,8 @@
 
 {% block content %}
     <section class="col-md-9">
+    <div class="card">
+    <div class="card-body">
 <div class="container mt-5">
     <h2>{% if form.instance.pk %}Редактировать пост{% else %}Создать пост{% endif %}</h2>
     <form method="post" enctype="multipart/form-data">
@@ -10,5 +12,8 @@
         <button type="submit" name="publish" class="btn btn-success">Опубликовать</button>
     </form>
 </div>
+    </div>
+    </div>
     </section>
+
 {% endblock %}
