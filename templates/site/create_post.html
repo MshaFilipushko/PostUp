@@ -1,54 +1,49 @@
 {% extends 'base.html' %}
-
 {% block title %}Создать пост{% endblock %}
-
 {% block content %}
 <section class="col-md-9">
 
-
-        <div class="card">
-            <div class="card-body">
-                <h1 class="card-title mb-4">Создать пост</h1>
-
-                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
-                    {% csrf_token %}
-
-                    <!-- Поле заголовка -->
-                    <div class="mb-3">
-                        <label for="{{ form.title.id_for_label }}" class="form-label">Заголовок</label>
-                        {{ form.title }}
-                        <div class="invalid-feedback">
-                            Пожалуйста, введите заголовок.
-                        </div>
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title mb-4">Создать пост</h1>
+            <form id="post-form" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <!-- Поле заголовка -->
+                <div class="mb-3">
+                    <label for="{{ form.title.id_for_label }}" class="form-label">Заголовок</label>
+                    {{ form.title }}
+                    <div class="invalid-feedback">
+                        Пожалуйста, введите заголовок.
                     </div>
-
-                    <!-- Поле контента -->
-                    <div class="mb-3">
-                        <label for="{{ form.content.id_for_label }}" class="form-label">Содержание</label>
-                        {{ form.content }}
-                        <div class="invalid-feedback">
-                            Пожалуйста, напишите содержание поста.
-                        </div>
+                </div>
+                <!-- Поле контента -->
+                <div class="mb-3">
+                    <label for="{{ form.content.id_for_label }}" class="form-label">Содержание</label>
+                    {{ form.content }}
+                    <div class="invalid-feedback">
+                        Пожалуйста, напишите содержание поста.
                     </div>
-
-                    <!-- Поле изображения -->
-                    <div class="mb-4">
-                        <label for="{{ form.image.id_for_label }}" class="form-label">Изображение (необязательно)</label>
-                        {{ form.image }}
-                        <div class="form-text">
-                            Поддерживаемые форматы: JPG, PNG, GIF. Максимальный размер: 5MB.
-                        </div>
+                </div>
+                <!-- Поле изображения -->
+                <div class="mb-4">
+                    <label for="{{ form.image.id_for_label }}" class="form-label">Изображение (обязательно)</label>
+                    {{ form.image }}
+                    <div class="invalid-feedback">
+                        Пожалуйста, загрузите изображение.
                     </div>
-
-                    <!-- Кнопки управления -->
-                    <div class="d-flex justify-content-between">
-                        <a href="{% url 'index' %}" class="btn btn-outline-secondary">Отмена</a>
-                        <button type="submit" name="publish" class="btn btn-primary">Опубликовать</button>
+                    <div class="form-text">
+                        Поддерживаемые форматы: JPG, PNG, GIF. Максимальный размер: 5MB.
                     </div>
-                </form>
-            </div>
+                </div>
+                <!-- Кнопки управления -->
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'index' %}" class="btn btn-outline-secondary">Отмена</a>
+                    <button type="submit" name="publish" class="btn btn-primary">Опубликовать</button>
+                </div>
+            </form>
+            <div id="error-messages" style="color: red; margin-top: 1rem;"></div>
         </div>
-
+    </div>
 
 </section>
 <!-- Подключение стилей для формы -->
@@ -58,22 +53,76 @@
     }
     textarea.form-control {
         min-height: 200px;
-        resize: vertical;
+        resize: none; /* Запрет изменения размера текстового поля */
     }
     .card {
         margin-top: 2rem;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+    .post-image {
+        width: 100%; /* Адаптивная ширина */
+        height: auto; /* Автоматическая высота */
+        object-fit: cover; /* Сохранение пропорций и обрезка */
+    }
+    body {
+        background-color: #dbeff6;
+    }
+    .avatar-circle {
+        width: 2rem;
+        height: 2rem;
+        background-color: #ccc;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+    }
 </style>
-
 <!-- Валидация формы -->
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('post-form');
+        const errorMessagesDiv = document.getElementById('error-messages');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // Отменяем отправку формы
+
+            let hasErrors = false;
+            const titleInput = form.querySelector('[name="title"]');
+            const imageInput = form.querySelector('[name="image"]');
+
+            // Очистка предыдущих ошибок
+            errorMessagesDiv.innerHTML = '';
+
+            // Проверка заголовка
+            if (!titleInput.value.trim()) {
+                showError('Пожалуйста, введите заголовок.');
+                hasErrors = true;
+            }
+
+            // Проверка изображения
+            if (!imageInput.files.length) {
+                showError('Пожалуйста, загрузите изображение.');
+                hasErrors = true;
+            }
+
+            if (!hasErrors) {
+                form.submit(); // Если нет ошибок, отправляем форму
+            }
+
+            function showError(message) {
+                const errorMessage = document.createElement('p');
+                errorMessage.textContent = message;
+                errorMessagesDiv.appendChild(errorMessage);
+            }
+        });
+    });
+
+    // Валидация стандартной бутстрап формы
     (function () {
         'use strict'
-
         var forms = document.querySelectorAll('.needs-validation')
-
         Array.prototype.slice.call(forms)
             .forEach(function (form) {
                 form.addEventListener('submit', function (event) {
@@ -81,7 +130,6 @@
                         event.preventDefault()
                         event.stopPropagation()
                     }
-
                     form.classList.add('was-validated')
                 }, false)
             })
