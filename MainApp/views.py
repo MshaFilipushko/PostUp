@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DeleteView
 
-from .models import Post, Bookmark, Subscription
+from .models import Post, Bookmark, Subscription, Comment
 from .forms import PostForm, CommentForm
 
 
@@ -206,4 +206,37 @@ def toggle_dislike(request, post_id):
             post.users_who_disliked.remove(request.user)
         post.save()
         return JsonResponse({'likes': post.likes, 'dislikes': post.dislikes})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+def toggle_like_comment(request, comment_id):
+    if request.method == 'POST':
+        comment = get_object_or_404(Comment, id=comment_id)
+        if request.user not in comment.users_who_liked.all():
+            comment.likes += 1
+            comment.users_who_liked.add(request.user)
+            if request.user in comment.users_who_disliked.all():
+                comment.dislikes -= 1
+                comment.users_who_disliked.remove(request.user)
+        else:
+            comment.likes -= 1
+            comment.users_who_liked.remove(request.user)
+        comment.save()
+        return JsonResponse({'likes': comment.likes, 'dislikes': comment.dislikes})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def toggle_dislike_comment(request, comment_id):
+    if request.method == 'POST':
+        comment = get_object_or_404(Comment, id=comment_id)
+        if request.user not in comment.users_who_disliked.all():
+            comment.dislikes += 1
+            comment.users_who_disliked.add(request.user)
+            if request.user in comment.users_who_liked.all():
+                comment.likes -= 1
+                comment.users_who_liked.remove(request.user)
+        else:
+            comment.dislikes -= 1
+            comment.users_who_disliked.remove(request.user)
+        comment.save()
+        return JsonResponse({'likes': comment.likes, 'dislikes': comment.dislikes})
     return JsonResponse({'error': 'Invalid request'}, status=400)

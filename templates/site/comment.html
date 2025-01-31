@@ -1,3 +1,4 @@
+<!-- site/comment.html -->
 <div class="card mb-3">
     <div class="card-body">
         <div class="d-flex align-items-center mb-2">
@@ -13,7 +14,21 @@
             {% endif %}
         </div>
         <p>{{ comment.content }}</p>
-
+        <!-- Лайки/Дизлайки -->
+        <div class="d-flex align-items-center gap-2 mt-3">
+            <form id="like-form-{{ comment.id }}" method="post" action="{% url 'toggle_like_comment' comment.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success btn-sm like-button" data-comment-id="{{ comment.id }}">
+                    <i class="fas fa-thumbs-up"></i> <span>{{ comment.likes }}</span>
+                </button>
+            </form>
+            <form id="dislike-form-{{ comment.id }}" method="post" action="{% url 'toggle_dislike_comment' comment.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm dislike-button" data-comment-id="{{ comment.id }}">
+                    <i class="fas fa-thumbs-down"></i> <span>{{ comment.dislikes }}</span>
+                </button>
+            </form>
+        </div>
         <!-- Вложенные комментарии -->
         {% for reply in comment.replies.all %}
             <div class="ms-4 mt-2">

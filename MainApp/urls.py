@@ -1,3 +1,4 @@
+# urls.py
 from django.urls import path
 from . import views
 from .views import DeletePostView, post_detail
@@ -12,7 +13,8 @@ urlpatterns = [
     path('post/<int:pk>/delete/', DeletePostView.as_view(), name='delete_post'),
     path('bookmarks/toggle/<int:post_id>/', views.toggle_bookmark, name='toggle_bookmark'),
     path('bookmarks/', views.bookmarks_list, name='bookmarks'),
-    path('post/<int:pk>/', post_detail, name='post_detail'),
     path('post/<int:post_id>/like/', views.toggle_like, name='toggle_like'),
     path('post/<int:post_id>/dislike/', views.toggle_dislike, name='toggle_dislike'),
+    path('comment/<int:comment_id>/like/', views.toggle_like_comment, name='toggle_like_comment'),
+    path('comment/<int:comment_id>/dislike/', views.toggle_dislike_comment, name='toggle_dislike_comment'),
 ]

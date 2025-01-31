@@ -1,3 +1,6 @@
+
+
+<!-- post_detail.html -->
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
@@ -7,7 +10,6 @@
             <div class="card-body">
                 <!-- Заголовок поста -->
                 <h2 class="card-title">{{ post.title|default:"Без заголовка" }}</h2>
-
                 <!-- Информация о посте -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="d-flex align-items-center">
@@ -23,15 +25,12 @@
                     <!-- Дата публикации -->
                     <p class="mb-0 text-muted small">Дата публикации: {{ post.published_date|date:"d.m.Y H:i" }}</p>
                 </div>
-
                 <!-- Изображение поста -->
                 {% if post.image %}
                     <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3 rounded">
                 {% endif %}
-
                 <!-- Контент поста -->
                 <p class="card-text">{{ post.content }}</p>
-
                 <!-- Действия для автора -->
                 {% if user == post.author %}
                     <div class="d-flex justify-content-end mt-3">
@@ -42,7 +41,6 @@
                         </form>
                     </div>
                 {% endif %}
-
                 <!-- Лайки/Дизлайки -->
                 <div class="d-flex align-items-center gap-2 mt-3">
                     <form id="like-form-{{ post.id }}" method="post" action="{% url 'toggle_like' post.id %}">
@@ -60,7 +58,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Блок комментариев -->
         <div class="mt-5">
             <h4>Комментарии ({{ comments.count }})</h4>
@@ -72,7 +69,6 @@
                 <p>Пока нет комментариев.</p>
             {% endfor %}
         </div>
-
         <!-- Форма комментария -->
         <div class="mt-4">
             <h4>Добавить комментарий</h4>
@@ -93,13 +89,11 @@
         </div>
     </div>
 </section>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Обработка лайков/дизлайков
+    // Обработка лайков/дизлайков постов
     const likeButtons = document.querySelectorAll('.like-button');
     const dislikeButtons = document.querySelectorAll('.dislike-button');
-
     likeButtons.forEach(button => {
         button.addEventListener('click', function(event) {
             event.preventDefault();
@@ -122,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-
     dislikeButtons.forEach(button => {
         button.addEventListener('click', function(event) {
             event.preventDefault();
@@ -146,6 +139,54 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Обработка лайков/дизлайков комментариев
+    const likeCommentButtons = document.querySelectorAll('.like-button[data-comment-id]');
+    const dislikeCommentButtons = document.querySelectorAll('.dislike-button[data-comment-id]');
+    likeCommentButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const commentId = this.getAttribute('data-comment-id');
+            const form = document.getElementById(`like-form-${commentId}`);
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': form.querySelector('input[name="csrfmiddlewaretoken"]').value
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                const likesElement = this.querySelector('span');
+                const dislikesElement = document.querySelector(`#dislike-form-${commentId} .dislike-button span`);
+                likesElement.textContent = data.likes;
+                dislikesElement.textContent = data.dislikes;
+            });
+        });
+    });
+    dislikeCommentButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const commentId = this.getAttribute('data-comment-id');
+            const form = document.getElementById(`dislike-form-${commentId}`);
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': form.querySelector('input[name="csrfmiddlewaretoken"]').value
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                const likesElement = document.querySelector(`#like-form-${commentId} .like-button span`);
+                const dislikesElement = this.querySelector('span');
+                likesElement.textContent = data.likes;
+                dislikesElement.textContent = data.dislikes;
+            });
+        });
+    });
+
     // Обработка ответов на комментарии
     document.querySelectorAll('.reply-button').forEach(button => {
         button.addEventListener('click', function() {
@@ -157,7 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
 function cancelReply() {
     document.getElementById('id_parent').value = '';
     const formContainer = document.querySelector('.mt-4');

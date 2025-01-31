@@ -1,3 +1,4 @@
+# models.py
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -13,6 +14,7 @@ class Post(models.Model):
     dislikes = models.IntegerField(default=0)
     users_who_liked = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     users_who_disliked = models.ManyToManyField(User, related_name='disliked_posts', blank=True)
+
     def publish(self):
         self.published_date = timezone.now()
         self.save()
@@ -24,6 +26,27 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Comment(models.Model):
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='replies'
+    )
+    likes = models.IntegerField(default=0)
+    dislikes = models.IntegerField(default=0)
+    users_who_liked = models.ManyToManyField(User, related_name='liked_comments', blank=True)
+    users_who_disliked = models.ManyToManyField(User, related_name='disliked_comments', blank=True)
+
+    def __str__(self):
+        return f'Комментарий от {self.author.username}'
 
 
 class Bookmark(models.Model):
@@ -42,20 +65,3 @@ class Subscription(models.Model):
 
     class Meta:
         unique_together = ('subscriber', 'target_user')
-
-
-class Comment(models.Model):
-    post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    parent = models.ForeignKey(
-        'self',
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name='replies'
-    )
-
-    def __str__(self):
-        return f'Комментарий от {self.author.username}'
