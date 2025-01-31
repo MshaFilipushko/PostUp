@@ -74,7 +74,7 @@ def edit_post(request, pk):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    comments = post.comments.all()  # Получаем все комментарии к посту
+    comments = post.comments.all().select_related('author').prefetch_related('replies')
 
     if request.method == 'POST':
         form = CommentForm(request.POST)

@@ -16,11 +16,12 @@ class PostForm(forms.ModelForm):
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['content']  # Только поле для текста комментария
+        fields = ['content', 'parent']
         widgets = {
             'content': forms.Textarea(attrs={
                 'rows': 3,
                 'class': 'form-control',
                 'placeholder': 'Напишите комментарий...'
             }),
+            'parent': forms.HiddenInput(attrs={'id': 'id_parent'}),
         }

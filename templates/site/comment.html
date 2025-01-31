@@ -1,0 +1,24 @@
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="d-flex align-items-center mb-2">
+            <div class="avatar-circle me-2">
+                {{ comment.author.username|first|upper }}
+            </div>
+            <strong>{{ comment.author.username }}</strong>
+            <small class="text-muted ms-2">{{ comment.created_at|timesince }} назад</small>
+            {% if user.is_authenticated %}
+                <button class="btn btn-link btn-sm ms-2 reply-button" data-comment-id="{{ comment.id }}">
+                    Ответить
+                </button>
+            {% endif %}
+        </div>
+        <p>{{ comment.content }}</p>
+
+        <!-- Вложенные комментарии -->
+        {% for reply in comment.replies.all %}
+            <div class="ms-4 mt-2">
+                {% include 'site/comment.html' with comment=reply %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
