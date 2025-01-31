@@ -1,3 +1,4 @@
+<!-- site/index.html -->
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
@@ -49,7 +50,7 @@
                             <!-- Изображение статьи (если есть) -->
                             {% if post.image %}
                                 <div class="text-center">
-                                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid post-image mb-3">
+                                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3 rounded">
                                 </div>
                             {% endif %}
                             <!-- Лайки и дизлайки -->
@@ -76,12 +77,10 @@
         {% endif %}
     </section>
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const likeButtons = document.querySelectorAll('.like-button');
     const dislikeButtons = document.querySelectorAll('.dislike-button');
-
     likeButtons.forEach(button => {
         button.addEventListener('click', function(event) {
             event.preventDefault();
@@ -104,7 +103,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-
     dislikeButtons.forEach(button => {
         button.addEventListener('click', function(event) {
             event.preventDefault();

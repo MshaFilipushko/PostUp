@@ -5,12 +5,7 @@
     object-fit: cover; /* Сохранение пропорций и обрезка */
 }
 
-@media (min-width: 768px) {
-    .post-image {
-        width: 1080px; /* Фиксированная ширина для больших экранов */
-        height: 620px; /* Фиксированная высота для больших экранов */
-    }
-}
+
 body {
     background-color: #dbeff6;
 }
