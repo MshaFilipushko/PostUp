@@ -1,12 +1,9 @@
-# MainApp/admin.py
-
-from django.contrib import admin
-from .models import Post, Bookmark, Subscription
-
 # Регистрация модели Post
+from django.contrib import admin
+from .models import Post, Comment, Bookmark, Subscription
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'published_date')
+    list_display = ('title', 'author', 'published_date', 'created_date')
     list_filter = ('author', 'published_date')
     search_fields = ('title', 'content')
     raw_id_fields = ('author',)
@@ -20,6 +17,17 @@ class PostAdmin(admin.ModelAdmin):
     created_date.admin_order_field = 'created_date'  # Позволяет сортировать по этому полю
     created_date.short_description = 'Created Date'
 
+
+# Регистрация модели Comment
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'post', 'author', 'created_at', 'likes', 'dislikes')
+    list_filter = ('author', 'created_at')
+    search_fields = ('content', 'author__username', 'post__title')
+    date_hierarchy = 'created_at'
+    ordering = ['-created_at']
+
+
 # Регистрация модели Bookmark
 @admin.register(Bookmark)
 class BookmarkAdmin(admin.ModelAdmin):
@@ -28,6 +36,7 @@ class BookmarkAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'post__title')
     date_hierarchy = 'created_at'
     ordering = ['-created_at']
+
 
 # Регистрация модели Subscription
 @admin.register(Subscription)
