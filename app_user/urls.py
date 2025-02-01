@@ -8,10 +8,9 @@ urlpatterns = [
 
     path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('profile/<int:pk>/', views.profile, name='profile'),
     path('donations/', views.donations, name='donations'),
     path('settings/', views.settings, name='settings'),
-    path('profile/<str:username>/', views.user_profile, name='user_profile'),
+    path('profile/<str:username>/', views.user_profile, name='profile'),
     path('subs/', views.subs, name='subs'),
     path('accounts/user/<str:username>/', views.user_profile, name='user_profile'),
     path('accounts/toggle_subscription/<str:username>/', views.toggle_subscription, name='toggle_subscription'),

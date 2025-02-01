@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<div class="row">  <!-- Добавляем обертку row -->
-    <!-- Основной контент -->
-    <section class="col-md-9">  <!-- Ограничиваем ширину как на главной -->
+<div class="row">
+    <section class="col-md-9">
         <div class="d-flex align-items-center mb-4">
             <div class="avatar-circle me-2">{{ profile_user.username|first|upper }}</div>
-            <h3>{{ profile_user.username }}</h3>
-            {% if request.user != profile_user %}
+            <h1>{{ profile_user.username }}</h1>
+            {% if not is_owner %}
                 <form method="post" action="{% url 'toggle_subscription' profile_user.username %}" class="ms-auto">
                     {% csrf_token %}
                     {% if is_subscribed %}
@@ -18,128 +17,72 @@
                 </form>
             {% endif %}
         </div>
-        <!-- Секция с постами пользователя -->
-        <h2 class="mt-4">Статьи пользователя</h2>
-        {% if posts %}
-            {% for post in posts %}
-                <!-- Повторяем структуру карточки из главной страницы -->
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <!-- Хедер статьи -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-circle me-2">
-                                    {{ post.author.username|first|upper }}
+
+        <div class="mt-4">
+            <!-- Динамический заголовок -->
+            <h2>{% if is_owner %}Мои статьи{% else %}Статьи пользователя{% endif %}</h2>
+
+            {% if posts %}
+                {% for post in posts %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle me-2">
+                                        {{ post.author.username|first|upper }}
+                                    </div>
+                                    <a href="{% url 'user_profile' post.author.username %}" class="text-decoration-none text-dark">
+                                        <strong>{{ post.author.username }}</strong>
+                                    </a>
                                 </div>
-                                <a href="{% url 'user_profile' post.author.username %}" class="text-decoration-none text-dark">
-                                    <strong>{{ post.author.username }}</strong>
+                                <!-- Кнопка закладки только для чужих статей -->
+                                {% if not is_owner %}
+                                <form method="post" action="{% url 'toggle_bookmark' post.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn {% if post.is_bookmarked %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm">
+                                        <i class="fas fa-bookmark"></i>
+                                        <span>{% if post.is_bookmarked %}В закладках{% else %}Закладки{% endif %}</span>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+
+                            <!-- Остальной контент статьи -->
+                            <p class="card-text text-muted mb-2">
+                                Опубликовано: {{ post.published_date|date:"d.m.Y H:i" }}
+                            </p>
+                            <h5 class="card-title">
+                                <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none text-dark">
+                                    {{ post.title|default:"Без заголовка" }}
                                 </a>
+                            </h5>
+                            <p class="card-text">{{ post.content|truncatechars:200 }}</p>
+
+                            {% if post.image %}
+                                <div class="text-center">
+                                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3" style="max-width: 100%;">
+                                </div>
+                            {% endif %}
+
+                            <div class="d-flex align-items-center gap-2">
+                                <!-- Формы лайков/дизлайков -->
                             </div>
-                            <!-- Кнопка "Закладка" -->
-                            <form method="post" action="{% url 'toggle_bookmark' post.pk %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn {% if post.is_bookmarked %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm">
-                                    <i class="fas fa-bookmark"></i> <span>{% if post.is_bookmarked %}В закладках{% else %}Закладки{% endif %}</span>
-                                </button>
-                            </form>
                         </div>
-                        <!-- Дата публикации -->
-                        <p class="card-text text-muted mb-2">
-                            Опубликовано: {{ post.published_date|date:"d.m.Y H:i" }}
-                        </p>
-                        <!-- Заголовок статьи с ссылкой -->
-                        <h5 class="card-title">
-                            <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none text-dark">
-                                {{ post.title|default:"Без заголовка" }}
-                            </a>
-                        </h5>
-                        <!-- Контент статьи -->
-                        <p class="card-text">{{ post.content|truncatechars:200 }}</p>
-                        <!-- Изображение статьи (если есть) -->
-                        {% if post.image %}
-                            <div class="text-center">
-                                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3" style="max-width: 100%;">
-                            </div>
-                        {% endif %}
-                        <!-- Лайки и дизлайки -->
-                        <div class="d-flex align-items-center gap-2">
-                            <form id="like-form-{{ post.id }}" method="post" action="{% url 'toggle_like' post.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-success btn-sm like-button" data-post-id="{{ post.id }}">
-                                    <i class="fas fa-thumbs-up"></i> <span>{{ post.likes }}</span>
-                                </button>
-                            </form>
-                            <form id="dislike-form-{{ post.id }}" method="post" action="{% url 'toggle_dislike' post.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-sm dislike-button" data-post-id="{{ post.id }}">
-                                    <i class="fas fa-thumbs-down"></i> <span>{{ post.dislikes }}</span>
-                                </button>
-                            </form>
-                        </div>
-                        <!-- Убираем кнопку "Читать далее" -->
                     </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>У пользователя пока нет статей.</p>
-        {% endif %}
+                {% endfor %}
+            {% else %}
+                <p>
+                    {% if is_owner %}
+                        У вас пока нет статей.
+                    {% else %}
+                        У пользователя пока нет статей.
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
     </section>
-    <!-- Пустая колонка для сохранения структуры -->
-    <aside class="col-md-3">
-        <!-- Здесь может быть сайдбар, если нужно -->
-    </aside>
+    <aside class="col-md-3"></aside>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const likeButtons = document.querySelectorAll('.like-button');
-    const dislikeButtons = document.querySelectorAll('.dislike-button');
-
-    likeButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const postId = this.getAttribute('data-post-id');
-            const form = document.getElementById(`like-form-${postId}`);
-            fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': form.querySelector('input[name="csrfmiddlewaretoken"]').value
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => response.json())
-            .then(data => {
-                const likesElement = this.querySelector('span');
-                const dislikesElement = document.querySelector(`#dislike-form-${postId} .dislike-button span`);
-                likesElement.textContent = data.likes;
-                dislikesElement.textContent = data.dislikes;
-            });
-        });
-    });
-
-    dislikeButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const postId = this.getAttribute('data-post-id');
-            const form = document.getElementById(`dislike-form-${postId}`);
-            fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': form.querySelector('input[name="csrfmiddlewaretoken"]').value
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => response.json())
-            .then(data => {
-                const likesElement = document.querySelector(`#like-form-${postId} .like-button span`);
-                const dislikesElement = this.querySelector('span');
-                likesElement.textContent = data.likes;
-                dislikesElement.textContent = data.dislikes;
-            });
-        });
-    });
-});
-</script>
+<!-- Общий скрипт для лайков -->
 {% endblock %}

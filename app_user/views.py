@@ -20,15 +20,7 @@ def register(request):
     return render(request, 'accounts/register.html', {'form': form})
 
 
-def profile(request, pk):
-    profile_user = get_object_or_404(User, id=pk)
-    posts = Post.objects.filter(author=profile_user).order_by('published_date')
-    context = {
-        'title': f'Профиль пользователя {profile_user.username}',
-        'profile_user': profile_user,
-        'posts': posts,
-    }
-    return render(request, 'accounts/profile.html', context)
+
 
 
 def bookmarks(request):
@@ -49,8 +41,9 @@ def subs(request):
 def user_profile(request, username):
     profile_user = get_object_or_404(User, username=username)
     posts = Post.objects.filter(author=profile_user).order_by('-published_date')
+    is_owner = request.user == profile_user  # Добавляем проверку владельца
 
-    # Проверяем, авторизован ли пользователь, и получаем его закладки
+    # Общая логика для закладок и подписок
     if request.user.is_authenticated:
         bookmarks = Bookmark.objects.filter(user=request.user)
         subscriptions = Subscription.objects.filter(subscriber=request.user)
@@ -68,6 +61,7 @@ def user_profile(request, username):
         'profile_user': profile_user,
         'posts': posts,
         'is_subscribed': is_subscribed,
+        'is_owner': is_owner,  # Передаем в шаблон
     }
     return render(request, 'accounts/user_profile.html', context)
 
