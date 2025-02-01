@@ -14,8 +14,10 @@ def index(request, category_slug=None):
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
         posts = Post.objects.filter(published_date__isnull=False, category=category).order_by('-published_date')
+        title = f"{category.name}"
     else:
         posts = Post.objects.filter(published_date__isnull=False).order_by('-published_date')
+        title = 'Последние статьи'
 
     bookmarks = Bookmark.objects.filter(user=request.user) if request.user.is_authenticated else None
     posts_with_bookmarks = []
@@ -25,7 +27,7 @@ def index(request, category_slug=None):
             'is_bookmarked': bookmarks.filter(post=post).exists() if request.user.is_authenticated else False
         })
     context = {
-        'title': 'Главная страница',
+        'title': title,
         'posts_with_bookmarks': posts_with_bookmarks,
         'categories': Category.objects.all(),
         'selected_category': category_slug

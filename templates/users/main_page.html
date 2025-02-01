@@ -1,11 +1,11 @@
-<!-- site/index.html -->
+<!-- main_page.html -->
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
 <div class="row">
     <!-- Основной контент -->
     <section class="col-md-9">
-        <h1 class="mb-4">Последние статьи</h1>
+        <h1 class="mb-4">{{ title }}</h1>
         {% if posts_with_bookmarks %}
             {% for item in posts_with_bookmarks %}
                 {% with post=item.post %}
