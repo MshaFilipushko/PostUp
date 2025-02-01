@@ -90,14 +90,13 @@
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('post-form');
         const errorMessagesDiv = document.getElementById('error-messages');
+        const imageInput = form.querySelector('[name="image"]');
 
         form.addEventListener('submit', function (event) {
             event.preventDefault(); // Отменяем отправку формы
-
             let hasErrors = false;
-            const titleInput = form.querySelector('[name="title"]');
-            const imageInput = form.querySelector('[name="image"]');
 
+            const titleInput = form.querySelector('[name="title"]');
             // Очистка предыдущих ошибок
             errorMessagesDiv.innerHTML = '';
 
@@ -111,6 +110,25 @@
             if (!imageInput.files.length) {
                 showError('Пожалуйста, загрузите изображение.');
                 hasErrors = true;
+            } else {
+                const file = imageInput.files[0];
+                const img = new Image();
+                img.onload = function() {
+                    if (img.width / img.height <= 1) {
+                        showError('Пожалуйста, загрузите горизонтальное изображение.');
+                        hasErrors = true;
+                    } else {
+                        if (!hasErrors) {
+                            form.submit(); // Если нет ошибок, отправляем форму
+                        }
+                    }
+                };
+                img.onerror = function() {
+                    showError('Невозможно загрузить изображение.');
+                    hasErrors = true;
+                };
+                img.src = URL.createObjectURL(file);
+                return;
             }
 
             if (!hasErrors) {
