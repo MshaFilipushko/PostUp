@@ -1,16 +1,23 @@
-# Регистрация модели Post
 from django.contrib import admin
-from .models import Post, Comment, Bookmark, Subscription
+from .models import Post, Comment, Bookmark, Subscription, Category
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug')
+    search_fields = ('name',)
+    prepopulated_fields = {'slug': ('name',)}
+
+
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'published_date', 'created_date')
-    list_filter = ('author', 'published_date')
+    list_display = ('title', 'author', 'published_date', 'created_date', 'category')
+    list_filter = ('author', 'published_date', 'category')
     search_fields = ('title', 'content')
     raw_id_fields = ('author',)
     date_hierarchy = 'published_date'
     ordering = ['-published_date']
 
-    # Добавляем поле created_date, если оно необходимо
     def created_date(self, obj):
         return obj.created_date if hasattr(obj, 'created_date') else None
 
@@ -18,7 +25,6 @@ class PostAdmin(admin.ModelAdmin):
     created_date.short_description = 'Created Date'
 
 
-# Регистрация модели Comment
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('id', 'post', 'author', 'created_at', 'likes', 'dislikes')
@@ -28,7 +34,6 @@ class CommentAdmin(admin.ModelAdmin):
     ordering = ['-created_at']
 
 
-# Регистрация модели Bookmark
 @admin.register(Bookmark)
 class BookmarkAdmin(admin.ModelAdmin):
     list_display = ('user', 'post', 'created_at')
@@ -38,7 +43,6 @@ class BookmarkAdmin(admin.ModelAdmin):
     ordering = ['-created_at']
 
 
-# Регистрация модели Subscription
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ('subscriber', 'target_user', 'created_at')

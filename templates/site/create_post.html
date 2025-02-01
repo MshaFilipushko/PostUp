@@ -2,7 +2,6 @@
 {% block title %}Создать пост{% endblock %}
 {% block content %}
 <section class="col-md-9">
-
     <div class="card">
         <div class="card-body">
             <h1 class="card-title mb-4">Создать пост</h1>
@@ -22,6 +21,14 @@
                     {{ form.content }}
                     <div class="invalid-feedback">
                         Пожалуйста, напишите содержание поста.
+                    </div>
+                </div>
+                <!-- Поле категории -->
+                <div class="mb-3">
+                    <label for="{{ form.category.id_for_label }}" class="form-label">Категория</label>
+                    {{ form.category }}
+                    <div class="invalid-feedback">
+                        Пожалуйста, выберите категорию.
                     </div>
                 </div>
                 <!-- Поле изображения -->
@@ -44,7 +51,6 @@
             <div id="error-messages" style="color: red; margin-top: 1rem;"></div>
         </div>
     </div>
-
 </section>
 <!-- Подключение стилей для формы -->
 <style>

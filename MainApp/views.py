@@ -6,28 +6,35 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DeleteView
 
-from .models import Post, Bookmark, Subscription, Comment
+from .models import Post, Bookmark, Subscription, Comment, Category
 from .forms import PostForm, CommentForm
 
 
-def index(request):
-    posts = Post.objects.filter(published_date__isnull=False).order_by('-published_date')
+def index(request, category_slug=None):
+    if category_slug:
+        category = get_object_or_404(Category, slug=category_slug)
+        posts = Post.objects.filter(published_date__isnull=False, category=category).order_by('-published_date')
+    else:
+        posts = Post.objects.filter(published_date__isnull=False).order_by('-published_date')
 
-    # Получаем закладки только для авторизованных пользователей
     bookmarks = Bookmark.objects.filter(user=request.user) if request.user.is_authenticated else None
-
     posts_with_bookmarks = []
     for post in posts:
         posts_with_bookmarks.append({
             'post': post,
             'is_bookmarked': bookmarks.filter(post=post).exists() if request.user.is_authenticated else False
         })
-
     context = {
         'title': 'Главная страница',
         'posts_with_bookmarks': posts_with_bookmarks,
+        'categories': Category.objects.all(),
+        'selected_category': category_slug
     }
     return render(request, 'users/main_page.html', context)
+
+
+def category_posts(request, category_slug):
+    return index(request, category_slug)
 
 
 def about(request):
@@ -45,11 +52,9 @@ def create_post(request):
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
-
             if 'publish' in request.POST:  # Если нажата кнопка "Опубликовать"
                 post.status = 'published'  # Устанавливаем статус "опубликовано"
                 post.publish()  # Устанавливаем дату публикации
-
             post.save()  # Сохраняем объект
             return redirect('post_detail', pk=post.pk)
     else:

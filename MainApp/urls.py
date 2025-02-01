@@ -1,4 +1,3 @@
-# urls.py
 from django.urls import path
 from . import views
 from .views import DeletePostView, post_detail
@@ -17,4 +16,5 @@ urlpatterns = [
     path('post/<int:post_id>/dislike/', views.toggle_dislike, name='toggle_dislike'),
     path('comment/<int:comment_id>/like/', views.toggle_like_comment, name='toggle_like_comment'),
     path('comment/<int:comment_id>/dislike/', views.toggle_dislike_comment, name='toggle_dislike_comment'),
+    path('category/<slug:category_slug>/', views.category_posts, name='category_posts'),  # Посты по категории
 ]

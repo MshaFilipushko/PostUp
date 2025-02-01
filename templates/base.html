@@ -160,15 +160,13 @@
                 <p></p>
                 <h5>Темы</h5>
                 <ul class="list-group">
-                    <li class="list-group-item dropdown">
-                        <a href="#">Игры</a>
-                    </li>
-                    <li class="list-group-item dropdown">
-                        <a href="#">Фильмы</a>
-                    </li>
-                    <li class="list-group-item dropdown">
-                        <a href="#">Сериалы</a>
-                    </li>
+                    {% for category in categories %}
+                        <li class="list-group-item dropdown">
+                            <a href="{% url 'category_posts' category.slug %}" class="{% if selected_category == category.slug %}active{% endif %}">
+                                {{ category.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
                 </ul>
             </aside>
             <!-- Основной контент -->
