@@ -1,12 +1,40 @@
 {% extends 'base.html' %}
-
-{% block title %}{{ title }}{% endblock %}
-
+{% block title %}Настройки аккаунта{% endblock %}
 {% block content %}
-    <section class="col-md-9">
-<div class="container">
-    <h1>{{ title }}</h1>
-    <p>Здесь будут настройки вашего аккаунта.</p>
-</div>
-    </section>
+<section class="col-md-9">
+    <div class="container">
+        <h1>Настройки аккаунта</h1>
+        {% if messages %}
+            <div class="alert alert-info">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="username" class="form-label">Имя пользователя</label>
+                <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="first_name" class="form-label">Имя</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+            </div>
+            <div class="mb-3">
+                <label for="age" class="form-label">Возраст</label>
+                <input type="number" class="form-control" id="age" name="age" value="{{ profile.age|default_if_none:'' }}">
+            </div>
+            <div class="mb-3">
+                <label for="bio" class="form-label">О себе</label>
+                <textarea class="form-control" id="bio" name="bio">{{ profile.bio }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        </form>
+    </div>
+</section>
 {% endblock %}

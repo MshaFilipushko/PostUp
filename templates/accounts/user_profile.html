@@ -3,9 +3,21 @@
 {% block content %}
 <div class="row">
     <section class="col-md-9">
+        <!-- Информация о пользователе -->
         <div class="d-flex align-items-center mb-4">
-            <div class="avatar-circle me-2">{{ profile_user.username|first|upper }}</div>
-            <h1>{{ profile_user.username }}</h1>
+            <!-- Аватарка -->
+            <div class="me-3" style="flex-shrink: 0;">
+                {% if profile_user.profile.avatar %}
+                    <img src="{{ profile_user.profile.avatar.url }}" alt="{{ profile_user.username }}" class="rounded-circle" style="width: 50px; height: 50px;">
+                {% else %}
+                    <div class="avatar-circle">{{ profile_user.username|first|upper }}</div>
+                {% endif %}
+            </div>
+            <!-- Информация о пользователе -->
+            <div>
+                <h1 style="margin-top: 0;">{{ profile_user.username }}</h1>
+            </div>
+            <!-- Кнопка подписки -->
             {% if not is_owner %}
                 <form method="post" action="{% url 'toggle_subscription' profile_user.username %}" class="ms-auto">
                     {% csrf_token %}
@@ -17,11 +29,22 @@
                 </form>
             {% endif %}
         </div>
-
+        <!-- Инфа о пользователе -->
+        <p class="text-muted">
+                    {% if profile_user.first_name %}
+                        {{ profile_user.first_name }}
+                    {% endif %}
+                    {% if profile_user.profile.age %}
+                        , {{ profile_user.profile.age }} лет
+                    {% endif %}
+                </p>
+                <!-- Проверка на наличие текста "О себе" -->
+                {% if profile_user.profile.bio %}
+                    <p>{{ profile_user.profile.bio }}</p>
+                {% endif %}
+        <!-- Статьи пользователя -->
         <div class="mt-4">
-            <!-- Динамический заголовок -->
             <h2>{% if is_owner %}Мои статьи{% else %}Статьи пользователя{% endif %}</h2>
-
             {% if posts %}
                 {% for post in posts %}
                     <div class="card mb-3">
@@ -46,7 +69,6 @@
                                 </form>
                                 {% endif %}
                             </div>
-
                             <!-- Остальной контент статьи -->
                             <p class="card-text text-muted mb-2">
                                 Опубликовано: {{ post.published_date|date:"d.m.Y H:i" }}
@@ -57,13 +79,11 @@
                                 </a>
                             </h5>
                             <p class="card-text">{{ post.content|truncatechars:200 }}</p>
-
                             {% if post.image %}
                                 <div class="text-center">
                                     <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3" style="max-width: 100%;">
                                 </div>
                             {% endif %}
-
                             <div class="d-flex align-items-center gap-2">
                                 <!-- Формы лайков/дизлайков -->
                             </div>
@@ -83,6 +103,5 @@
     </section>
     <aside class="col-md-3"></aside>
 </div>
-
 <!-- Общий скрипт для лайков -->
 {% endblock %}
