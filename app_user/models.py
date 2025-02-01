@@ -5,18 +5,31 @@ from captcha.fields import CaptchaField
 from django.db import models
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True, label="Email")
-    captcha = CaptchaField(label="Пожалуйста, докажите, что вы человек")
+    first_name = forms.CharField(
+        label="Имя",
+        max_length=30,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    )
+    age = forms.IntegerField(
+        label="Возраст",
+        required=True,
+        widget=forms.NumberInput(attrs={'class': 'form-control'}),
+    )
 
     class Meta:
         model = User
-        fields = ("username", "email", "password1", "password2", "captcha")
+        fields = ('username', 'email', 'first_name', 'password1', 'password2')
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.email = self.cleaned_data["email"]
+        user.first_name = self.cleaned_data['first_name']
         if commit:
             user.save()
+            # Создаем или обновляем профиль пользователя
+            profile, created = Profile.objects.get_or_create(user=user)
+            profile.age = self.cleaned_data['age']
+            profile.save()
         return user
 
 

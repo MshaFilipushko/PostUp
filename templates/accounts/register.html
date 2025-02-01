@@ -1,10 +1,8 @@
 {% extends 'base.html' %}
 {% load form_tags %}
-
 {% block title %}Регистрация{% endblock %}
-
 {% block content %}
-    <section class="col-md-9">
+<section class="col-md-9">
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
         <div class="card shadow-sm">
@@ -12,7 +10,6 @@
                 <h2 class="mb-4 text-center">Регистрация</h2>
                 <form method="post" novalidate>
                     {% csrf_token %}
-
                     <!-- Общие ошибки формы (например, капча) -->
                     {% if form.non_field_errors %}
                         <div class="alert alert-danger">
@@ -21,7 +18,6 @@
                             {% endfor %}
                         </div>
                     {% endif %}
-
                     <!-- Поле "Имя пользователя" -->
                     <div class="mb-3">
                         <label for="id_username" class="form-label">Имя пользователя</label>
@@ -39,7 +35,6 @@
                             </div>
                         {% endif %}
                     </div>
-
                     <!-- Поле "Email" -->
                     <div class="mb-3">
                         <label for="id_email" class="form-label">Email</label>
@@ -56,7 +51,36 @@
                             </div>
                         {% endif %}
                     </div>
-
+                    <!-- Поле "Имя" -->
+                    <div class="mb-3">
+                        <label for="id_first_name" class="form-label">Имя</label>
+                        {{ form.first_name|add_class:"form-control" }}
+                        <small class="form-text text-muted">
+                            - Введите ваше имя.
+                        </small>
+                        {% if form.first_name.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.first_name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <!-- Поле "Возраст" -->
+                    <div class="mb-3">
+                        <label for="id_age" class="form-label">Возраст</label>
+                        {{ form.age|add_class:"form-control" }}
+                        <small class="form-text text-muted">
+                            - Укажите ваш возраст.
+                        </small>
+                        {% if form.age.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.age.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
                     <!-- Поле "Пароль" -->
                     <div class="mb-3">
                         <label for="id_password1" class="form-label">Пароль</label>
@@ -74,7 +98,6 @@
                             </div>
                         {% endif %}
                     </div>
-
                     <!-- Поле "Повторите пароль" -->
                     <div class="mb-3">
                         <label for="id_password2" class="form-label">Повторите пароль</label>
@@ -90,22 +113,6 @@
                             </div>
                         {% endif %}
                     </div>
-
-                    <!-- Поле "Капча" -->
-                    <div class="mb-3">
-                        {{ form.captcha|add_class:"form-control" }}
-                        <small class="form-text text-muted">
-                            - Введите символы с изображения.
-                        </small>
-                        {% if form.captcha.errors %}
-                            <div class="text-danger mt-1">
-                                {% for error in form.captcha.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
                     <!-- Кнопка отправки формы -->
                     <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
                 </form>
@@ -116,5 +123,5 @@
         </div>
     </div>
 </div>
-    </section>
+</section>
 {% endblock %}

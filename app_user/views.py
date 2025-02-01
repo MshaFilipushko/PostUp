@@ -10,11 +10,12 @@ from app_user.models import CustomUserCreationForm, Profile
 
 
 def register(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')  # Перенаправление после успешной регистрации
+            messages.success(request, 'Вы успешно зарегистрировались! Теперь вы можете войти.')
+            return redirect('login')  # Перенаправление на страницу входа
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
