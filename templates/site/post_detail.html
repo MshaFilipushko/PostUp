@@ -8,9 +8,7 @@
     <div class="container mt-5">
         <div class="card">
             <div class="card-body">
-                <!-- Заголовок поста -->
-                <h2 class="card-title">{{ post.title|default:"Без заголовка" }}</h2>
-                <!-- Информация о посте -->
+
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="d-flex align-items-center">
                         <!-- Аватарка пользователя -->
@@ -25,7 +23,11 @@
                     <!-- Дата публикации -->
                     <p class="mb-0 text-muted small">Дата публикации: {{ post.published_date|date:"d.m.Y H:i" }}</p>
                 </div>
+                <!-- Заголовок поста -->
+                <h2 class="card-title">{{ post.title|default:"Без заголовка" }}</h2>
+                <!-- Информация о посте -->
                 <!-- Изображение поста -->
+                <p></p>
                 {% if post.image %}
                     <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3 rounded">
                 {% endif %}
@@ -33,13 +35,6 @@
                 <p class="card-text">{{ post.content }}</p>
                 <!-- Действия для автора -->
                 {% if user == post.author %}
-                    <div class="d-flex justify-content-end mt-3">
-                        <a href="{% url 'edit_post' pk=post.pk %}" class="btn btn-secondary me-2">Редактировать</a>
-                        <form action="{% url 'delete_post' pk=post.pk %}" method="POST">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
-                        </form>
-                    </div>
                 {% endif %}
                 <!-- Лайки/Дизлайки -->
                 <div class="d-flex align-items-center gap-2 mt-3">
@@ -55,6 +50,11 @@
                             <i class="fas fa-thumbs-down"></i> <span>{{ post.dislikes }}</span>
                         </button>
                     </form>
+                    <a href="{% url 'edit_post' pk=post.pk %}" class="btn btn-secondary me-2">Редактировать</a>
+                        <form action="{% url 'delete_post' pk=post.pk %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
+                        </form>
                 </div>
             </div>
         </div>
@@ -77,7 +77,7 @@
                     {% csrf_token %}
                     {{ form.parent }}
                     <div class="mb-3">
-                        {{ form.content.label_tag }}
+
                         {{ form.content }}
                     </div>
                     <button type="submit" class="btn btn-primary">Отправить</button>

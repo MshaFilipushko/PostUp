@@ -110,7 +110,7 @@
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li class="dropdown-header fw-bold text-center">Мой блог</li>
                                 <li>
-                                    <a class="dropdown-item d-flex align-items-center" href="{% url 'profile' user.username %}">
+                                    <a class="dropdown-item d-flex align-items-center" href="{% url 'user_profile' user.username %}">
                                         <div class="avatar-circle me-2">
                                             {{ user.username|first|upper }}
                                         </div>

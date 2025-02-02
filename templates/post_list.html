@@ -1,23 +1,27 @@
-<!-- templates/users/main_page.html -->
+<!-- templates/users/post_list.html -->
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
 <div class="row">
-    <!-- Основной контент -->
     <section class="col-md-9">
         <h1 class="mb-4">{{ title }}</h1>
+
+        {% block before_posts %}{% endblock %}
+
         {% if posts_with_bookmarks %}
             {% for item in posts_with_bookmarks %}
-                {% include 'users/includes/post_card.html' with post=item.post is_bookmarked=item.is_bookmarked %}
+                {% include 'includes/post_card.html' with post=item.post is_bookmarked=item.is_bookmarked %}
             {% endfor %}
         {% else %}
-            <p>Пока нет статей.</p>
+            <p>{{ empty_message|default:"Пока нет статей." }}</p>
         {% endif %}
     </section>
-</div>
-{% endblock %}
 
-{% block scripts %}
+    {% block sidebar %}
+    <!-- Базовый сайдбар можно оставить пустым -->
+    {% endblock %}
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const likeButtons = document.querySelectorAll('.like-button');

@@ -7,61 +7,12 @@
         <h1 class="mb-4">Мои закладки</h1>
         {% if bookmarks %}
             {% for bookmark in bookmarks %}
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <!-- Повторяем структуру карточки из main.html -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-circle me-2">
-                                    {{ bookmark.post.author.username|first|upper }}
-                                </div>
-                                <a href="{% url 'user_profile' bookmark.post.author.username %}" class="text-decoration-none text-dark">
-                                    <strong>{{ bookmark.post.author.username }}</strong>
-                                </a>
-                            </div>
-                            <!-- Кнопка "Закладка" и дата добавления -->
-                            <div class="d-flex align-items-center">
-                                <!-- Кнопка "Закладка" -->
-                                <form method="post" action="{% url 'toggle_bookmark' bookmark.post.pk %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn {% if bookmark.is_bookmarked %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm">
-                                        <i class="fas fa-bookmark"></i> <span>{% if bookmark.is_bookmarked %}В закладках{% else %}Закладки{% endif %}</span>
-                                    </button>
-                                </form>
-                                <!-- Дата добавления закладки -->
-                                <span class="ms-2 text-muted small">
-                                    Добавлено: {{ bookmark.created_at|date:"d.m.Y H:i" }}
-                                </span>
-                            </div>
-                        </div>
-                        <h5 class="card-title">
-                            <a href="{% url 'post_detail' bookmark.post.pk %}" class="text-decoration-none text-dark">
-                                {{ bookmark.post.title|default:"Без заголовка" }}
-                            </a>
-                        </h5>
-                        <p class="card-text">{{ bookmark.post.content|truncatechars:200 }}</p>
-                        {% if bookmark.post.image %}
-                            <div class="text-center">
-                                <img src="{{ bookmark.post.image.url }}" alt="{{ bookmark.post.title }}" class="img-fluid mb-3" style="max-width: 100%;">
-                            </div>
-                        {% endif %}
-                        <!-- Лайки и дизлайки -->
-                        <div class="d-flex align-items-center gap-2">
-                            <form id="like-form-{{ bookmark.post.id }}" method="post" action="{% url 'toggle_like' bookmark.post.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-success btn-sm like-button" data-post-id="{{ bookmark.post.id }}">
-                                    <i class="fas fa-thumbs-up"></i> <span>{{ bookmark.post.likes }}</span>
-                                </button>
-                            </form>
-                            <form id="dislike-form-{{ bookmark.post.id }}" method="post" action="{% url 'toggle_dislike' bookmark.post.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-sm dislike-button" data-post-id="{{ bookmark.post.id }}">
-                                    <i class="fas fa-thumbs-down"></i> <span>{{ bookmark.post.dislikes }}</span>
-                                </button>
-                            </form>
-                        </div>
-                        <!-- Убираем кнопку "Читать далее" -->
-                    </div>
+                {% include 'includes/post_card.html' with post=bookmark.post is_bookmarked=bookmark.is_bookmarked %}
+                <!-- Блок с датой добавления в закладки -->
+                <div class="text-end mb-4">
+                    <span class="text-muted small">
+                        Добавлено: {{ bookmark.created_at|date:"d.m.Y H:i" }}
+                    </span>
                 </div>
             {% endfor %}
         {% else %}
@@ -71,57 +22,4 @@
         {% endif %}
     </section>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const likeButtons = document.querySelectorAll('.like-button');
-    const dislikeButtons = document.querySelectorAll('.dislike-button');
-
-    likeButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const postId = this.getAttribute('data-post-id');
-            const form = document.getElementById(`like-form-${postId}`);
-            fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': form.querySelector('input[name="csrfmiddlewaretoken"]').value
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => response.json())
-            .then(data => {
-                const likesElement = this.querySelector('span');
-                const dislikesElement = document.querySelector(`#dislike-form-${postId} .dislike-button span`);
-                likesElement.textContent = data.likes;
-                dislikesElement.textContent = data.dislikes;
-            });
-        });
-    });
-
-    dislikeButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const postId = this.getAttribute('data-post-id');
-            const form = document.getElementById(`dislike-form-${postId}`);
-            fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': form.querySelector('input[name="csrfmiddlewaretoken"]').value
-                },
-                body: JSON.stringify({})
-            })
-            .then(response => response.json())
-            .then(data => {
-                const likesElement = document.querySelector(`#like-form-${postId} .like-button span`);
-                const dislikesElement = this.querySelector('span');
-                likesElement.textContent = data.likes;
-                dislikesElement.textContent = data.dislikes;
-            });
-        });
-    });
-});
-</script>
 {% endblock %}

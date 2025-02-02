@@ -26,13 +26,14 @@ def index(request, category_slug=None):
             'post': post,
             'is_bookmarked': bookmarks.filter(post=post).exists() if request.user.is_authenticated else False
         })
-    context = {
+
+    return render(request, 'post_list.html', {
         'title': title,
         'posts_with_bookmarks': posts_with_bookmarks,
         'categories': Category.objects.all(),
-        'selected_category': category_slug
-    }
-    return render(request, 'users/main_page.html', context)
+        'selected_category': category_slug,
+        'empty_message': 'Пока нет статей в этой категории.' if category_slug else 'Пока нет статей.'
+    })
 
 
 def category_posts(request, category_slug):
@@ -122,17 +123,18 @@ def toggle_bookmark(request, post_id):
 
 @login_required
 def bookmarks_list(request):
-    # Получаем все закладки пользователя и сортируем их по дате создания в обратном порядке
     bookmarks = Bookmark.objects.filter(user=request.user).select_related('post').order_by('-created_at')
 
-    # Добавляем информацию о состоянии закладок (уже закладан или нет)
-    for bookmark in bookmarks:
-        bookmark.is_bookmarked = True  # Все посты в списке закладок уже закладаны
+    posts_with_bookmarks = [{
+        'post': bookmark.post,
+        'is_bookmarked': True
+    } for bookmark in bookmarks]
 
-    context = {
-        'bookmarks': bookmarks,
-    }
-    return render(request, 'accounts/bookmarks.html', context)
+    return render(request, 'post_list.html', {
+        'title': 'Мои закладки',
+        'posts_with_bookmarks': posts_with_bookmarks,
+        'empty_message': 'У вас пока нет закладок.'
+    })
 
 
 def fresh_posts(request):
@@ -160,27 +162,20 @@ def fresh_posts(request):
 
 @login_required
 def subscribed_posts(request):
-    # Получаем всех пользователей, на которых подписан текущий пользователь
     subscribed_users = request.user.subscriptions.values_list('target_user', flat=True)
-
-    # Получаем все посты этих пользователей
     posts = Post.objects.filter(author__in=subscribed_users).order_by('-published_date')
-
-    # Получаем все закладки текущего пользователя
     bookmarks = Bookmark.objects.filter(user=request.user).values_list('post_id', flat=True)
 
-    # Формируем список постов с информацией о закладках
-    posts_with_bookmarks = []
-    for post in posts:
-        posts_with_bookmarks.append({
-            'post': post,
-            'is_bookmarked': post.id in bookmarks
-        })
+    posts_with_bookmarks = [{
+        'post': post,
+        'is_bookmarked': post.id in bookmarks
+    } for post in posts]
 
-    context = {
+    return render(request, 'post_list.html', {
+        'title': 'Статьи моих подписок',
         'posts_with_bookmarks': posts_with_bookmarks,
-    }
-    return render(request, 'users/subscribed_posts.html', context)
+        'empty_message': 'Пока нет статей от ваших подписок.'
+    })
 
 
 def toggle_like(request, post_id):

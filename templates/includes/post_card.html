@@ -1,0 +1,51 @@
+<!-- includes/post_card.html -->
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center">
+                <div class="avatar-circle me-2">
+                    {{ post.author.username|first|upper }}
+                </div>
+                <a href="{% url 'user_profile' post.author.username %}" class="text-decoration-none text-dark">
+                    <strong>{{ post.author.username }}</strong>
+                </a>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <form method="post" action="{% url 'toggle_bookmark' post.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn {% if is_bookmarked %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm">
+                        <i class="fas fa-bookmark"></i> <span>{% if is_bookmarked %}В закладках{% else %}Закладки{% endif %}</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <p class="card-text text-muted mb-2">
+            Опубликовано: {{ post.published_date|date:"d.m.Y H:i" }}
+        </p>
+        <h5 class="card-title">
+            <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none text-dark">
+                {{ post.title|default:"Без заголовка" }}
+            </a>
+        </h5>
+        {% if post.image %}
+            <div class="text-center">
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3 rounded">
+            </div>
+        {% endif %}
+        <p class="card-text">{{ post.content|truncatechars:200 }}</p>
+        <div class="d-flex align-items-center gap-2">
+            <form id="like-form-{{ post.id }}" method="post" action="{% url 'toggle_like' post.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success btn-sm like-button" data-post-id="{{ post.id }}">
+                    <i class="fas fa-thumbs-up"></i> <span>{{ post.likes }}</span>
+                </button>
+            </form>
+            <form id="dislike-form-{{ post.id }}" method="post" action="{% url 'toggle_dislike' post.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm dislike-button" data-post-id="{{ post.id }}">
+                    <i class="fas fa-thumbs-down"></i> <span>{{ post.dislikes }}</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

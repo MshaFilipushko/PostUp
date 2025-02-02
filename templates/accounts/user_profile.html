@@ -47,48 +47,7 @@
             <h2>{% if is_owner %}Мои статьи{% else %}Статьи пользователя{% endif %}</h2>
             {% if posts %}
                 {% for post in posts %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-circle me-2">
-                                        {{ post.author.username|first|upper }}
-                                    </div>
-                                    <a href="{% url 'user_profile' post.author.username %}" class="text-decoration-none text-dark">
-                                        <strong>{{ post.author.username }}</strong>
-                                    </a>
-                                </div>
-                                <!-- Кнопка закладки только для чужих статей -->
-                                {% if not is_owner %}
-                                <form method="post" action="{% url 'toggle_bookmark' post.pk %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn {% if post.is_bookmarked %}btn-warning{% else %}btn-outline-secondary{% endif %} btn-sm">
-                                        <i class="fas fa-bookmark"></i>
-                                        <span>{% if post.is_bookmarked %}В закладках{% else %}Закладки{% endif %}</span>
-                                    </button>
-                                </form>
-                                {% endif %}
-                            </div>
-                            <!-- Остальной контент статьи -->
-                            <p class="card-text text-muted mb-2">
-                                Опубликовано: {{ post.published_date|date:"d.m.Y H:i" }}
-                            </p>
-                            <h5 class="card-title">
-                                <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none text-dark">
-                                    {{ post.title|default:"Без заголовка" }}
-                                </a>
-                            </h5>
-                            <p class="card-text">{{ post.content|truncatechars:200 }}</p>
-                            {% if post.image %}
-                                <div class="text-center">
-                                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3" style="max-width: 100%;">
-                                </div>
-                            {% endif %}
-                            <div class="d-flex align-items-center gap-2">
-                                <!-- Формы лайков/дизлайков -->
-                            </div>
-                        </div>
-                    </div>
+                    {% include 'includes/post_card.html' with post=post is_bookmarked=post.is_bookmarked %}
                 {% endfor %}
             {% else %}
                 <p>
@@ -104,4 +63,52 @@
     <aside class="col-md-3"></aside>
 </div>
 <!-- Общий скрипт для лайков -->
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const likeButtons = document.querySelectorAll('.like-button');
+    const dislikeButtons = document.querySelectorAll('.dislike-button');
+
+    likeButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const postId = this.getAttribute('data-post-id');
+            const form = document.getElementById(`like-form-${postId}`);
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                button.querySelector('span').textContent = data.likes;
+                document.querySelector(`#dislike-form-${postId} span`).textContent = data.dislikes;
+            });
+        });
+    });
+
+    dislikeButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const postId = this.getAttribute('data-post-id');
+            const form = document.getElementById(`dislike-form-${postId}`);
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector(`#like-form-${postId} span`).textContent = data.likes;
+                button.querySelector('span').textContent = data.dislikes;
+            });
+        });
+    });
+});
+</script>
 {% endblock %}
