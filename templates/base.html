@@ -11,59 +11,6 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Добавленные стили для футера -->
-    <style>
-        /* Стили для выравнивания элементов в навигации */
-        .navbar-nav {
-            display: flex;
-            align-items: center; /* Выравниваем элементы по вертикали */
-        }
-        .nav-item {
-            display: flex;
-            align-items: center; /* Выравниваем элементы внутри nav-item */
-        }
-        .avatar-circle {
-            width: 2rem;
-            height: 2rem;
-            background-color: #ccc;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-        }
-        /* Стили для основного контента */
-        main {
-            min-height: calc(100vh - 120px); /* Высота страницы минус высота навигации и футера */
-            padding-top: 20px;
-            padding-bottom: 20px;
-        }
-        /* Стили для футера */
-        footer {
-            height: 60px;
-            line-height: 60px;
-        }
-        /* Стили для левой панели */
-        aside {
-            padding-right: 15px; /* Отступ справа для разделения панели и контента */
-        }
-        /* Стили для основного контента */
-        section.col-md-9 {
-            padding-left: 15px; /* Отступ слева для разделения панели и контента */
-        }
-        /* Стили для изображений */
-        .post-image {
-            width: 100%; /* Адаптивная ширина */
-            height: auto; /* Автоматическая высота */
-            object-fit: cover; /* Сохранение пропорций и обрезка */
-        }
-
-        @media (min-width: 768px) {
-            .post-image {
-                width: 1080px; /* Фиксированная ширина для больших экранов */
-                height: 620px; /* Фиксированная высота для больших экранов */
-            }
-        }
-    </style>
 </head>
 <body>
     <!-- Навигация -->
@@ -99,6 +46,7 @@
                         {% endif %}
                     </li>
                     {% if user.is_authenticated %}
+
                         <!-- Выпадающее меню с аватаркой -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -111,6 +59,7 @@
                                 <li class="dropdown-header fw-bold text-center">Мой блог</li>
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center" href="{% url 'user_profile' user.username %}">
+
                                         <div class="avatar-circle me-2">
                                             {{ user.username|first|upper }}
                                         </div>
@@ -142,7 +91,7 @@
         </div>
     </nav>
     <!-- Основное содержимое -->
-    <main class="container my-5">
+    <main class="container my-3">
         <div class="row">
             <!-- Боковая навигация -->
             <aside class="col-md-3">
@@ -152,9 +101,6 @@
                     </li>
                     <li class="list-group-item dropdown">
                         <a class="nav-link {% if request.path == '/subscribed/' %}active{% endif %}" href="{% url 'subscribed_posts' %}">Мои подписки</a>
-                    </li>
-                    <li class="list-group-item dropdown">
-                        <a href="#">Популярное</a>
                     </li>
                 </ul>
                 <p></p>
@@ -171,9 +117,11 @@
             </aside>
             <!-- Основной контент -->
             <section class="col-md-9">
+
                 {% block content %}
                 <!-- Сюда будет подставляться содержимое других шаблонов -->
                 {% endblock %}
+
             </section>
         </div>
     </main>
@@ -185,5 +133,6 @@
     </footer>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

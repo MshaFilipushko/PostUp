@@ -8,6 +8,7 @@
 
 body {
     background-color: #dbeff6;
+
 }
 
 .avatar-circle {
@@ -26,6 +27,63 @@ body {
     margin-bottom: 1rem;
 }
 
+
+
 textarea.form-control {
     resize: none; /* Запрет изменения размера текстового поля */
 }
+
+        /* Стили для выравнивания элементов в навигации */
+        .navbar-nav {
+            display: flex;
+            align-items: center; /* Выравниваем элементы по вертикали */
+        }
+        .nav-item {
+            display: flex;
+            align-items: center; /* Выравниваем элементы внутри nav-item */
+        }
+        .avatar-circle {
+            width: 2rem;
+            height: 2rem;
+            background-color: #ccc;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+        /* Стили для основного контента */
+        main {
+            min-height: calc(100vh - 120px); /* Высота страницы минус высота навигации и футера */
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+        /* Стили для футера */
+        footer {
+            height: 60px;
+            line-height: 60px;
+        }
+        /* Стили для левой панели */
+        aside {
+            padding-right: 15px; /* Отступ справа для разделения панели и контента */
+        }
+        /* Стили для основного контента */
+        section.col-md-9 {
+            padding-left: 15px; /* Отступ слева для разделения панели и контента */
+        }
+        /* Стили для изображений */
+        .post-image {
+            width: 100%; /* Адаптивная ширина */
+            height: auto; /* Автоматическая высота */
+            object-fit: cover; /* Сохранение пропорций и обрезка */
+        }
+
+        @media (min-width: 768px) {
+            .post-image {
+                width: 1080px; /* Фиксированная ширина для больших экранов */
+                height: 620px; /* Фиксированная высота для больших экранов */
+            }
+        }
+
+
+
